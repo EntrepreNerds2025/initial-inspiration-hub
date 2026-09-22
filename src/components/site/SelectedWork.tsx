@@ -182,14 +182,9 @@ export default function SelectedWork() {
             aria-labelledby={`title-${project.id}`}
           >
             <div className="archive-entry-top">
-              <span className="archive-id">{project.id}</span>
-              <span className="archive-meta">
-                {project.status === "original"
-                  ? project.department === "THE SCRIBE DEPT."
-                    ? "A SCRIBE DEPT. ORIGINAL SERIES"
-                    : "A DEPT. COLLECTIVE FILM"
-                  : "SELECTED WORK"}
-              </span>
+              <p className="archive-meta">
+                <span className="archive-id">{project.id}</span> / {project.category}
+              </p>
             </div>
             <div className="archive-films">
               {project.films.map((film, index) => (
@@ -209,11 +204,16 @@ export default function SelectedWork() {
               <div>
                 <h3 id={`title-${project.id}`}>{project.title}</h3>
                 <p className="archive-meta">
-                  {[project.category, project.location, project.year].filter(Boolean).join(" / ")}
+                  {[project.role || project.department || "SELECTED WORK", project.year]
+                    .filter(Boolean)
+                    .join(" / ")}
                 </p>
-                {(project.role || project.productionCredit) && (
+                {(project.status === "original" || project.productionCredit) && (
                   <p className="archive-meta archive-credit">
-                    {[project.role, project.productionCredit].filter(Boolean).join(" · ")}
+                    {project.productionCredit ||
+                      (project.department === "THE SCRIBE DEPT."
+                        ? "A SCRIBE DEPT. ORIGINAL SERIES"
+                        : "A DEPT. COLLECTIVE FILM")}
                   </p>
                 )}
               </div>

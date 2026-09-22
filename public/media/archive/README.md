@@ -26,7 +26,8 @@ hover previews are 8 seconds at 360×640, silent, roughly 230 KB / 498 KB.
 Replace the same paths to update media. Keep original masters outside the repo.
 
 Add DC—006, DC—007, etc. as another project object; IDs are not chronological.
-Choose `wide`, `left`, `right`, or `series` for editorial placement. `films` can
+Projects share a three-column contact sheet (two on tablet, one on mobile).
+Use `series` for paired vertical films; other layout values share the standard cell. `films` can
 hold multiple shorts. `original` displays the original-work credit; department
 selects the Scribe label. No case-study route is fabricated: missing
 `caseStudyUrl` opens the accessible film dialog. A supplied URL takes precedence
@@ -37,5 +38,6 @@ Desktop mouse hover mounts one silent inline preview; leaving the frame,
 scrolling offscreen, hiding the tab, or enabling reduced motion removes it.
 Touch users tap a frame or OPEN FILE to open the full player with audio and
 controls. The series player has short-selection buttons. Escape/Close restores
-focus. Mobile uses full-width entries and two offset native vertical frames.
+focus. Mobile uses full-width entries with two side-by-side native vertical frames
+inside one shared media area.
 The archive uses normal scrolling and adds no animation dependency.
