@@ -3,6 +3,7 @@ import { useEffect } from "react";
 
 import Navbar from "@/components/site/Navbar";
 import Hero from "@/components/site/Hero";
+import Manifesto from "@/components/site/Manifesto";
 import SelectedWork from "@/components/site/SelectedWork";
 import Approach from "@/components/site/Approach";
 import Director from "@/components/site/Director";
@@ -62,6 +63,7 @@ function Index() {
       <Navbar />
       <main>
         <Hero />
+        <Manifesto />
         <SelectedWork />
         <Approach />
         <Director />

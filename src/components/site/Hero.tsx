@@ -1,17 +1,22 @@
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import HeroWordmark from "./HeroWordmark";
-import heroPoster from "@/assets/hero.jpg";
+import { heroPoster, heroVideo as HERO_VIDEO } from "./hero-media";
 import "./hero.css";
-
-// Add the final film to public/media/dept-hero.mp4, then set this to
-// "/media/dept-hero.mp4". Null deliberately avoids a missing-file request.
-const HERO_VIDEO: string | null = null;
 
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
   const cursor = useRef<HTMLSpanElement>(null);
   const maskId = useId().replace(/:/g, "");
+  const [videoEnabled, setVideoEnabled] = useState(false);
+
+  useEffect(() => {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setVideoEnabled(!reduced.matches);
+    update();
+    reduced.addEventListener("change", update);
+    return () => reduced.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     const section = root.current;
@@ -50,7 +55,7 @@ export default function Hero() {
       const details = section.querySelector<HTMLElement>(".dept-hero-details");
       if (details) details.inert = progress >= 0.36;
       if (video.current) {
-        if (visible && !document.hidden && progress > 0.02 && !reduced.matches)
+        if (visible && !document.hidden && !reduced.matches)
           void video.current.play().catch(() => {});
         else video.current.pause();
       }
@@ -79,7 +84,7 @@ export default function Hero() {
       compact.removeEventListener("change", schedule);
       document.removeEventListener("visibilitychange", schedule);
     };
-  }, []);
+  }, [videoEnabled]);
 
   return (
     <header
@@ -104,15 +109,20 @@ export default function Hero() {
           <div className="dept-hero-paper" />
           <div className="dept-hero-media">
             <img src={heroPoster} alt="" fetchPriority="high" />
-            {HERO_VIDEO && (
+            {videoEnabled && (
               <video
                 ref={video}
                 src={HERO_VIDEO}
                 poster={heroPoster}
+                autoPlay
                 muted
                 loop
                 playsInline
                 preload="none"
+                style={{ visibility: "hidden" }}
+                onPlaying={(event) => {
+                  event.currentTarget.style.visibility = "visible";
+                }}
                 onError={() => {
                   if (video.current) video.current.style.display = "none";
                 }}

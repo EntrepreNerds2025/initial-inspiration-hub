@@ -1,0 +1,247 @@
+/* Section 02. No changes to the approved hero or the existing following sections. */
+.dept-manifesto {
+  position: relative;
+  z-index: 1;
+  margin-top: calc(-1 * max(100svh, 540px));
+  color: #d3c3a5;
+  font-family: "Satoshi Variable", sans-serif;
+}
+.manifesto-sequence {
+  position: relative;
+  height: 560svh;
+  --manifesto-visible: 0;
+  --manifesto-shade: 0;
+  --manifesto-black: 0;
+  --manifesto-meta: 0;
+  --manifesto-document: 0;
+}
+.manifesto-stage {
+  pointer-events: none;
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 540px;
+  overflow: hidden;
+  opacity: var(--manifesto-visible);
+  background: #0a0a0a;
+}
+.manifesto-visual,
+.manifesto-media-layer,
+.manifesto-shade,
+.manifesto-black,
+.manifesto-words {
+  position: absolute;
+  inset: 0;
+}
+.manifesto-visual {
+  filter: saturate(0.7);
+}
+.manifesto-media-layer img,
+.manifesto-media-layer video {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 65% center;
+}
+.manifesto-shade,
+.manifesto-black {
+  background: #0a0a0a;
+}
+.manifesto-shade {
+  opacity: var(--manifesto-shade);
+}
+.manifesto-black {
+  opacity: var(--manifesto-black);
+}
+.manifesto-words {
+  margin: 0 5%;
+}
+.manifesto-beat {
+  position: absolute;
+  top: 42%;
+  left: 0;
+  width: min(1050px, 95%);
+  margin: 0;
+  opacity: 0;
+  font-size: clamp(44px, 7.7vw, 122px);
+  line-height: 0.98;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+.manifesto-document {
+  position: absolute;
+  top: 32%;
+  left: 0.3%;
+  opacity: var(--manifesto-document);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+}
+.manifesto-subject {
+  font-size: clamp(40px, 7vw, 112px);
+}
+.manifesto-metadata {
+  position: absolute;
+  bottom: 30px;
+  left: 5%;
+  right: 5%;
+  display: flex;
+  justify-content: space-between;
+  opacity: var(--manifesto-meta);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+.manifesto-metadata output {
+  font-variant-numeric: tabular-nums;
+}
+.manifesto-pause {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 65px;
+  right: 5%;
+  padding: 12px 0;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+.manifesto-pause:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 4px;
+}
+.manifesto-closing {
+  position: relative;
+  background: #0a0a0a;
+  min-height: 100svh;
+  padding: clamp(90px, 12vw, 180px) 5% 80px;
+}
+.manifesto-label {
+  font-size: 10px;
+  line-height: 1.8;
+  letter-spacing: 0.14em;
+  color: #d3c3a5a6;
+}
+.manifesto-closing h2 {
+  margin: 70px 0 80px;
+  font-weight: 700;
+  font-size: clamp(36px, 6.5vw, 104px);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+.manifesto-closing h2 span {
+  display: block;
+  margin-top: 0.65em;
+  margin-left: 23%;
+}
+.manifesto-closing-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 60px;
+}
+.manifesto-closing-bottom p {
+  max-width: 470px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #d3c3a5b3;
+}
+.manifesto-reading {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (pointer: coarse), (max-width: 600px) {
+  .dept-manifesto {
+    margin-top: calc(-1 * max(100svh, 580px));
+  }
+  .manifesto-sequence {
+    height: 370svh;
+  }
+  .manifesto-stage {
+    min-height: 580px;
+  }
+  .manifesto-beat {
+    top: 40%;
+    width: 100%;
+    font-size: clamp(32px, 10.5vw, 70px);
+  }
+  .manifesto-subject {
+    font-size: clamp(30px, 9.2vw, 68px);
+  }
+  .manifesto-document {
+    top: 31%;
+    font-size: 10px;
+  }
+  .manifesto-closing {
+    padding-top: 90px;
+  }
+  .manifesto-closing h2 {
+    font-size: clamp(32px, 8.5vw, 62px);
+    margin: 45px 0 65px;
+  }
+  .manifesto-closing h2 span {
+    margin-left: 8%;
+    margin-top: 0.9em;
+  }
+  .manifesto-closing-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 42px;
+  }
+  .manifesto-closing-bottom p {
+    font-size: 15px;
+  }
+  .manifesto-metadata {
+    font-size: 9px;
+    bottom: 24px;
+  }
+}
+@media (max-width: 350px) {
+  .manifesto-metadata output {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dept-manifesto {
+    margin-top: 0;
+    background: #0a0a0a;
+  }
+  .manifesto-sequence {
+    height: auto;
+  }
+  .manifesto-stage {
+    display: none;
+  }
+  .manifesto-reading {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    padding: 100px 5% 50px;
+  }
+  .manifesto-reading h2 {
+    font-size: clamp(30px, 5vw, 70px);
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+  .manifesto-reading p {
+    margin-top: 64px;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+  }
+  .manifesto-reading ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    font-size: clamp(26px, 4vw, 60px);
+    line-height: 1.4;
+    font-weight: 700;
+  }
+}

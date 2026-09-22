@@ -1,19 +1,16 @@
 # Section 01 hero film
 
-The temporary hero media is the existing `src/assets/hero.jpg` photograph.
-No stock footage or remote video is used by the hero.
+The final 17.4-second reel is `public/media/dept-hero.mp4`: a silent, fast-start
+H.264 MP4 at the original 1920×1080 resolution, optimized from the supplied MOV
+(27 MB to 8.8 MB). The matching first-frame fallback is `dept-hero-poster.jpg`.
+Replace these files to update Section 01; their URLs are configured in `src/components/site/hero-media.ts`.
+The manifesto reuses this reel throughout its sequence, synchronizing playback at entry.
 
-To enable the final film:
-
-1. Add an optimized, silent H.264 MP4 at `public/media/dept-hero.mp4`.
-2. Set `HERO_VIDEO` to `"/media/dept-hero.mp4"` in
-   `src/components/site/Hero.tsx` (currently `null`).
-3. Replace the imported poster with a still from the final film if desired.
-
-Keep the loop short and compressed (ideally under 5 MB). Video is decorative,
-muted, inline, and starts only during the scroll reveal. It pauses outside the
-hero; rejected autoplay or a failed video falls back to the still. Reduced-motion
-visitors see the static typographic hero, without the extra scroll distance.
+One video element autoplays muted, loops, and plays inline without controls.
+The same element stays mounted through the entire mask/full-screen transition;
+scrolling never seeks or resets playback. It pauses offscreen or in a hidden tab.
+The poster remains visible until playback begins and on video failure. Reduced-motion
+visitors see the poster without mounting or downloading the video.
 
 The opening viewport is 100svh. Desktop uses 160svh of native scroll travel;
 touch/small screens use 90svh and a gentler 9× zoom (desktop: 26×).
