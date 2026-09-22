@@ -1,0 +1,396 @@
+@font-face {
+  font-family: "Satoshi Variable";
+  src: url("../../assets/fonts/Satoshi-Variable.ttf") format("truetype");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: block;
+}
+/* Section 01 only. SVG cutout reveals the poster/film without canvas or a motion library. */
+.dept-hero {
+  --hero-media: 0.025;
+  --hero-contrast: 0.72;
+  --hero-saturation: 0.2;
+  --hero-scale: 1;
+  --hero-mask: 1;
+  --hero-details: 1;
+  position: relative;
+  height: 260svh;
+  background: #0a0a0a;
+  color: #f2efe9;
+  isolation: isolate;
+}
+.dept-hero-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  min-height: 540px;
+  overflow: hidden;
+}
+.dept-hero-composition,
+.dept-hero-paper,
+.dept-hero-media,
+.dept-hero-mask {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.dept-hero-paper {
+  background: #d3c3a5;
+}
+.dept-hero-media {
+  opacity: var(--hero-media);
+  filter: saturate(var(--hero-saturation)) contrast(var(--hero-contrast));
+}
+.dept-hero-media img,
+.dept-hero-media video {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 65% center;
+}
+.dept-hero-mask {
+  opacity: var(--hero-mask);
+}
+.dept-hero-letters {
+  font-family: "Satoshi Variable", sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.055em;
+  transform-box: view-box;
+  transform-origin: 48% 65%;
+  transform: scale(var(--hero-scale));
+}
+
+.dept-hero-details {
+  position: absolute;
+  inset: 0;
+  opacity: var(--hero-details);
+  pointer-events: none;
+  font:
+    400 11px/1.6 "Satoshi Variable",
+    sans-serif;
+  letter-spacing: 0.12em;
+}
+
+.dept-hero-identity {
+  position: absolute;
+  left: 2.5%;
+  bottom: 11%;
+  font-size: 11px;
+}
+
+.dept-hero-bottom {
+  position: absolute;
+  bottom: 26px;
+  left: 2.5%;
+  right: 2.5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f2efe91f;
+  padding-top: 18px;
+}
+.dept-hero-enter {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+  padding: 8px 0;
+}
+.dept-hero-enter span {
+  font: 24px/1 sans-serif;
+}
+.dept-hero-enter:focus-visible,
+.dept-nav a:focus-visible,
+.dept-nav button:focus-visible {
+  outline: 1px solid #f2efe9;
+  outline-offset: 6px;
+}
+.dept-hero-intro {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #0a0a0a;
+  pointer-events: none;
+  animation: dept-intro-out 0.4s ease 1s both;
+}
+.dept-hero-intro span {
+  font:
+    400 11px/1.5 "Satoshi Variable",
+    sans-serif;
+  letter-spacing: 0.2em;
+  animation: dept-intro-in 0.25s ease 0.15s both;
+}
+.dept-hero-composition {
+  animation: dept-title-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.95s both;
+}
+.dept-hero-details {
+  animation: dept-details-in 0.5s ease 1.35s both;
+}
+.hero-has-scrolled .dept-hero-intro {
+  display: none;
+}
+.hero-has-scrolled .dept-hero-composition,
+.hero-has-scrolled .dept-hero-details {
+  animation: none;
+}
+@keyframes dept-intro-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dept-intro-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes dept-title-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dept-details-in {
+  from {
+    visibility: hidden;
+  }
+  to {
+    visibility: visible;
+  }
+}
+/* Native pointer stays available; this is an optional fine-pointer accent, not a replacement. */
+.dept-hero-cursor {
+  display: none;
+}
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .dept-hero-cursor {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 110;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .dept-hero-cursor[data-visible="true"] {
+    opacity: 0.65;
+  }
+  .dept-hero-cursor::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 1px solid #f2efe9;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition:
+      width 0.2s ease,
+      height 0.2s ease;
+  }
+  .dept-hero-cursor[data-active="true"]::after {
+    width: 30px;
+    height: 30px;
+  }
+}
+.dept-nav {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+  color: #f2efe9;
+  background: transparent;
+  font:
+    400 11px/1.5 "Satoshi Variable",
+    sans-serif;
+  letter-spacing: 0.12em;
+}
+.dept-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 2.5%;
+}
+.dept-nav-brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 48px;
+}
+.dept-nav-brand img {
+  display: block;
+  width: 44px;
+  height: auto;
+}
+.dept-nav button {
+  cursor: pointer;
+  padding: 10px 0 10px 20px;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+}
+.dept-nav-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: none;
+  gap: 30px;
+  text-transform: uppercase;
+}
+.dept-nav-past {
+  background: #0a0a0a;
+  border-bottom: 1px solid #f2efe924;
+}
+.dept-nav-open {
+  background: #0a0a0a;
+}
+.dept-nav-open .dept-nav-links {
+  display: flex;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  padding: 30px 2.5%;
+  background: #0a0a0a;
+  border-bottom: 1px solid #f2efe924;
+}
+.dept-nav a:hover {
+  color: #c9a36a;
+}
+@media (min-width: 900px) {
+  .dept-nav-past:not(.dept-nav-open) .dept-nav-links {
+    display: flex;
+  }
+  .dept-nav-past:not(.dept-nav-open) button {
+    display: none;
+  }
+}
+@media (max-width: 600px), (max-width: 900px) and (orientation: portrait) {
+  .dept-hero-stage {
+    min-height: 580px;
+  }
+
+  .dept-hero-letters {
+    transform-origin: 48% 48%;
+  }
+
+  .dept-hero-identity {
+    left: 5%;
+    bottom: 17%;
+    font-size: 10px;
+  }
+
+  .dept-hero-bottom {
+    left: 5%;
+    right: 5%;
+    bottom: 22px;
+    font-size: 9px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 8px;
+  }
+  .dept-hero-year {
+    display: block;
+    justify-self: end;
+  }
+  .dept-hero-enter {
+    grid-column: 1 / -1;
+    justify-self: end;
+    font-size: 9px;
+    gap: 16px;
+    padding: 10px 0;
+  }
+  .dept-nav-bar {
+    padding: 17px 5%;
+  }
+  .dept-nav-open .dept-nav-links {
+    flex-direction: column;
+    gap: 0;
+    padding: 12px 5% 24px;
+  }
+  .dept-nav-links a {
+    display: block;
+    padding: 12px 0;
+  }
+}
+@media (max-height: 600px) and (min-width: 601px) {
+  .dept-hero-stage {
+    min-height: 400px;
+  }
+  .dept-hero-identity {
+    bottom: 15%;
+  }
+  .dept-hero-bottom {
+    bottom: 12px;
+    padding-top: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:has(.dept-hero) {
+    scroll-behavior: auto;
+  }
+  .dept-hero {
+    height: 100svh;
+    min-height: 580px;
+  }
+  .dept-hero-stage {
+    position: relative;
+  }
+  .dept-hero-intro {
+    display: none;
+  }
+  .dept-hero-composition,
+  .dept-hero-details {
+    animation: none;
+  }
+  .dept-hero-media {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .dept-nav {
+    animation: dept-intro-in 0.4s ease 1s both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body:has(.dept-hero)::after {
+    animation: none;
+  }
+}
+
+.dept-wordmark text {
+  letter-spacing: -0.045em;
+}
+
+.dept-hero-end {
+  position: absolute;
+  top: calc(100% - 100svh);
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+@media (pointer: coarse), (max-width: 600px) {
+  .dept-hero {
+    height: 190svh;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dept-hero {
+    height: 100svh;
+  }
+  .dept-hero-end {
+    top: 100%;
+  }
+}

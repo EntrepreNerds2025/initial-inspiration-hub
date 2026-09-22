@@ -1,84 +1,176 @@
-import heroImg from "@/assets/hero.jpg";
+import { useEffect, useId, useRef } from "react";
+import HeroWordmark from "./HeroWordmark";
+import heroPoster from "@/assets/hero.jpg";
+import "./hero.css";
+
+// Add the final film to public/media/dept-hero.mp4, then set this to
+// "/media/dept-hero.mp4". Null deliberately avoids a missing-file request.
+const HERO_VIDEO: string | null = null;
 
 export default function Hero() {
+  const root = useRef<HTMLElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
+  const cursor = useRef<HTMLSpanElement>(null);
+  const maskId = useId().replace(/:/g, "");
+
+  useEffect(() => {
+    const section = root.current;
+    if (!section) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const compact = window.matchMedia("(pointer: coarse), (max-width: 600px)");
+    const stage = section.querySelector<HTMLElement>(".dept-hero-stage");
+    const smooth = (start: number, end: number, value: number) => {
+      const t = Math.max(0, Math.min(1, (value - start) / (end - start)));
+      return t * t * (3 - 2 * t);
+    };
+    let frame = 0;
+    let visible = true;
+    const paint = () => {
+      frame = 0;
+      const bounds = section.getBoundingClientRect();
+      const distance = section.offsetHeight - (stage?.offsetHeight ?? window.innerHeight);
+      const progress = reduced.matches
+        ? 0
+        : Math.max(0, Math.min(1, -bounds.top / Math.max(1, distance)));
+      // One native-scroll timeline: reveal first, enter the letters, then
+      // dissolve only the remaining black mask into the SAME media layer.
+      const reveal = smooth(0.06, 0.85, progress);
+      const expansion = smooth(compact.matches ? 0.42 : 0.4, 1, progress);
+      section.style.setProperty("--hero-media", String(0.025 + reveal * 0.975));
+      section.style.setProperty("--hero-contrast", String(0.72 + reveal * 0.28));
+      section.style.setProperty("--hero-saturation", String(0.2 + reveal * 0.5));
+      section.style.setProperty(
+        "--hero-scale",
+        String(Math.exp(expansion * Math.log(compact.matches ? 9 : 26))),
+      );
+      section.style.setProperty("--hero-mask", String(1 - smooth(0.85, 1, progress)));
+      section.style.setProperty("--hero-details", String(1 - smooth(0.12, 0.36, progress)));
+      // Scrolling should never wait for the opening title sequence.
+      section.classList.toggle("hero-has-scrolled", progress > 0.01);
+      const details = section.querySelector<HTMLElement>(".dept-hero-details");
+      if (details) details.inert = progress >= 0.36;
+      if (video.current) {
+        if (visible && !document.hidden && progress > 0.02 && !reduced.matches)
+          void video.current.play().catch(() => {});
+        else video.current.pause();
+      }
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(paint);
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry?.isIntersecting ?? false;
+      if (visible) schedule();
+      else video.current?.pause();
+    });
+    observer.observe(section);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    reduced.addEventListener("change", schedule);
+    compact.addEventListener("change", schedule);
+    document.addEventListener("visibilitychange", schedule);
+    paint();
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      reduced.removeEventListener("change", schedule);
+      compact.removeEventListener("change", schedule);
+      document.removeEventListener("visibilitychange", schedule);
+    };
+  }, []);
+
   return (
     <header
       id="top"
-      className="relative overflow-hidden"
-      style={{ height: "clamp(560px, calc(100vh - 340px), 720px)", minHeight: "560px" }}
+      ref={root}
+      className="dept-hero"
+      onPointerMove={(event) => {
+        if (event.pointerType !== "mouse" || !cursor.current) return;
+        cursor.current.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
+        cursor.current.dataset["visible"] = "true";
+        cursor.current.dataset["active"] = String(
+          event.target instanceof Element && !!event.target.closest("a, button"),
+        );
+      }}
+      onPointerLeave={() => {
+        if (cursor.current) cursor.current.dataset["visible"] = "false";
+      }}
     >
-      {/* Hero image: anchored right, fading into black on the left and bottom */}
-      <div className="absolute inset-y-0 right-0 w-[70%] md:w-[61%] z-0">
-        <img
-          src={heroImg}
-          alt=""
-          className="w-full h-full object-cover object-right"
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(90deg, #0a0a0a 0%, rgba(10,10,10,0.45) 10%, rgba(10,10,10,0) 26%), linear-gradient(0deg, #0a0a0a 0%, rgba(10,10,10,0) 18%), linear-gradient(180deg, rgba(10,10,10,0.6) 0%, rgba(10,10,10,0) 16%)",
-          }}
-        />
-      </div>
-
-      {/* Copy */}
-      <div className="wrap relative z-[2] h-full pt-36 flex flex-col justify-center">
-        <div>
-          <span className="label reveal on block">
-            Director&nbsp;&nbsp;/&nbsp;&nbsp;Cinematographer
-          </span>
-          <h1
-            className="reveal on d1 uppercase font-thin text-ink mt-5 mb-8"
-            style={{
-              fontSize: "clamp(54px, 7.7vw, 120px)",
-              lineHeight: 1.06,
-              letterSpacing: "0.01em",
-              fontWeight: 100,
-            }}
-          >
-            Stories in
-            <br />
-            Motion
-          </h1>
-          <p className="reveal on d2 max-w-[300px] text-[15px] leading-[1.6] text-ink-dim font-light">
-            I partner with visionary brands and agencies to craft cinematic
-            work that moves people, emotionally and aesthetically.
-          </p>
-          <a
-            href="#work"
-            className="reveal on d3 mt-10 inline-flex items-center gap-6 border-b border-ink pb-2.5 text-[10.5px] uppercase font-normal tracking-[0.25em] text-ink no-underline transition-all duration-300 hover:text-accent hover:border-accent hover:gap-8"
-          >
-            View Work <span aria-hidden>&#8594;</span>
-          </a>
+      <div className="dept-hero-stage">
+        <h1 className="sr-only">dept. collective — Visual storytelling studio</h1>
+        <div className="dept-hero-composition" aria-hidden="true">
+          <div className="dept-hero-paper" />
+          <div className="dept-hero-media">
+            <img src={heroPoster} alt="" fetchPriority="high" />
+            {HERO_VIDEO && (
+              <video
+                ref={video}
+                src={HERO_VIDEO}
+                poster={heroPoster}
+                muted
+                loop
+                playsInline
+                preload="none"
+                onError={() => {
+                  if (video.current) video.current.style.display = "none";
+                }}
+              />
+            )}
+          </div>
+          <svg className="dept-hero-mask" width="100%" height="100%" aria-hidden="true">
+            <defs>
+              <mask
+                id={maskId}
+                maskUnits="userSpaceOnUse"
+                x="0"
+                y="0"
+                width="100%"
+                height="100%"
+                style={{ maskType: "luminance" }}
+              >
+                <rect width="100%" height="100%" fill="white" />
+                <g className="dept-hero-letters" fill="black">
+                  <HeroWordmark />
+                </g>
+              </mask>
+            </defs>
+            <rect width="100%" height="100%" fill="#0a0a0a" mask={`url(#${maskId})`} />
+          </svg>
+        </div>
+        <div className="dept-hero-details">
+          <p className="dept-hero-identity">VISUAL STORYTELLING STUDIO</p>
+          <div className="dept-hero-bottom">
+            <span>TORONTO / CANADA</span>
+            <span className="dept-hero-year">EST. 2026</span>
+            <a
+              href="#hero-entered"
+              className="dept-hero-enter"
+              onClick={(event) => {
+                const section = root.current;
+                const stage = section?.querySelector<HTMLElement>(".dept-hero-stage");
+                if (!section || !stage) return;
+                event.preventDefault();
+                const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                const top =
+                  window.scrollY +
+                  section.getBoundingClientRect().top +
+                  section.offsetHeight -
+                  (reduced ? 0 : stage.offsetHeight);
+                window.scrollTo({ top, behavior: reduced ? "auto" : "smooth" });
+              }}
+            >
+              SCROLL TO ENTER <span aria-hidden="true">↓</span>
+            </a>
+          </div>
+        </div>
+        <div className="dept-hero-intro" aria-hidden="true">
+          <span>VISUAL STORYTELLING STUDIO</span>
         </div>
       </div>
-
-      {/* Quote: bottom right */}
-      <div className="reveal on d3 hidden lg:block absolute z-[2] right-[clamp(28px,3.6vw,60px)] bottom-[100px] max-w-[150px]">
-        <p className="text-[14.5px] leading-[1.55] text-ink/90 font-light mb-4">
-          &ldquo;The ability to create emotion in a frame is
-          everything.&rdquo;
-        </p>
-        <span className="text-[9.5px] uppercase tracking-[0.25em] text-ink-dim">
-          Riann Grant
-        </span>
-      </div>
-
-      {/* Scroll hint: right edge */}
-      <div className="hidden md:flex absolute z-[3] right-[clamp(24px,3.2vw,56px)] bottom-4 flex-col items-center gap-3">
-        <span
-          className="text-[9px] uppercase tracking-[0.4em] text-ink-faint"
-          style={{ writingMode: "vertical-rl" }}
-        >
-          Scroll
-        </span>
-        <span
-          className="w-px h-12 bg-gradient-to-b from-ink-dim to-transparent"
-          style={{ animation: "drip 2.4s cubic-bezier(0.22,1,0.36,1) infinite" }}
-        />
-      </div>
+      <span id="hero-entered" className="dept-hero-end" aria-hidden="true" />
+      <span ref={cursor} className="dept-hero-cursor" aria-hidden="true" />
     </header>
   );
 }

@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import deptLogo from "@/assets/dept-logo-beige.png";
 
 const links = [
-  { label: "Work", href: "#work", active: true },
+  { label: "Work", href: "#work" },
   { label: "Director", href: "#director" },
   { label: "Approach", href: "#approach" },
   { label: "Journal", href: "#journal" },
@@ -9,42 +10,65 @@ const links = [
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
+  const [pastHero, setPastHero] = useState(false);
+  const [open, setOpen] = useState(false);
+  const toggle = useRef<HTMLButtonElement>(null);
+  const nav = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => {
+      const hero = document.getElementById("top");
+      const stage = hero?.querySelector<HTMLElement>(".dept-hero-stage");
+      const end = hero ? hero.offsetHeight - (stage?.offsetHeight ?? window.innerHeight) : 0;
+      setPastHero(window.scrollY > Math.max(40, end));
+    };
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && nav.current?.contains(document.activeElement)) {
+        setOpen(false);
+        toggle.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("keydown", onKey);
+    };
   }, []);
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ease-cine ${
-        scrolled
-          ? "bg-bg/80 backdrop-blur-xl border-b border-line"
-          : "bg-transparent"
-      }`}
+      ref={nav}
+      aria-label="Main navigation"
+      className={`dept-nav ${pastHero ? "dept-nav-past" : ""} ${open ? "dept-nav-open" : ""}`}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false);
+      }}
     >
-      <div className="wrap flex items-center justify-between py-7">
+      <div className="dept-nav-bar">
         <a
           href="#top"
-          className="text-[10.5px] uppercase font-normal tracking-[0.28em] text-ink whitespace-nowrap no-underline"
+          className="dept-nav-brand"
+          aria-label="Dept. Collective home"
+          onClick={() => setOpen(false)}
         >
-          Riann Grant&nbsp;&nbsp;&middot;&nbsp;&nbsp;The Department Collective
+          <img src={deptLogo} alt="" width={48} height={34} />
         </a>
-        <ul className="hidden md:flex list-none gap-[clamp(20px,3vw,52px)]">
-          {links.map((l) => (
-            <li key={l.label} className="relative">
-              <a
-                href={l.href}
-                className={`relative pb-1.5 text-[10px] uppercase font-normal tracking-label no-underline transition-colors duration-300 ${
-                  l.active ? "text-ink" : "text-ink-dim hover:text-ink"
-                }`}
-              >
-                {l.label}
-                {l.active && (
-                  <span className="absolute left-1/2 -translate-x-1/2 -bottom-[6px] w-[3px] h-[3px] rounded-full bg-ink" />
-                )}
+        <button
+          ref={toggle}
+          type="button"
+          aria-expanded={open}
+          aria-controls="dept-main-links"
+          onClick={() => setOpen(!open)}
+        >
+          {open ? "CLOSE −" : "MENU +"}
+        </button>
+        <ul id="dept-main-links" className="dept-nav-links">
+          {links.map((link) => (
+            <li key={link.href}>
+              <a href={link.href} onClick={() => setOpen(false)}>
+                {link.label}
               </a>
             </li>
           ))}
