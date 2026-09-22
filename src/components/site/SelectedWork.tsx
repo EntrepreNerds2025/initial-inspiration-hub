@@ -1,70 +1,97 @@
 import { useEffect, useRef, useState } from "react";
 import { archiveProjects, type ArchiveFilm, type ArchiveProject } from "./archive-projects";
 import "./archive.css";
+import { useArchivePlayback } from "./useArchivePlayback";
 
 function FilmPreview({
   film,
   title,
   onOpen,
+  active,
+  delay,
 }: {
   film: ArchiveFilm;
   title: string;
   onOpen: () => void;
+  active: boolean;
+  delay: number;
 }) {
-  const [preview, setPreview] = useState(false);
-  const button = useRef<HTMLButtonElement>(null);
-  const startPreview = (pointerType: string) => {
-    // Actual mouse input also works on laptops/tablets whose primary input is touch.
-    if (pointerType === "mouse" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-      setPreview(true);
-  };
+  const [mounted, setMounted] = useState(false);
+  const video = useRef<HTMLVideoElement>(null);
+  const iframe = useRef<HTMLIFrameElement>(null);
+  const playing = useRef(false);
   useEffect(() => {
-    const element = button.current;
-    if (!element) return;
-    const stop = () => setPreview(false);
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry?.isIntersecting) stop();
-    });
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-    observer.observe(element);
-    document.addEventListener("visibilitychange", stop);
-    reduced.addEventListener("change", stop);
-    return () => {
-      observer.disconnect();
-      document.removeEventListener("visibilitychange", stop);
-      reduced.removeEventListener("change", stop);
+    let timer: ReturnType<typeof setTimeout>;
+    const currentVideo = video.current;
+    const command = (method: string, value?: number | boolean) =>
+      iframe.current?.contentWindow?.postMessage({ method, value }, "https://player.vimeo.com");
+    const sync = () => {
+      if (video.current) {
+        video.current.muted = true;
+        if (playing.current) void video.current.play().catch(() => {});
+        else video.current.pause();
+      }
+      command("setVolume", 0);
+      command("setLoop", true);
+      command(playing.current ? "play" : "pause");
     };
-  }, []);
+    const ready = (event: MessageEvent) => {
+      if (
+        event.origin !== "https://player.vimeo.com" ||
+        event.source !== iframe.current?.contentWindow
+      )
+        return;
+      let data;
+      try {
+        data = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
+      } catch {
+        return;
+      }
+      if (data?.event === "ready") sync();
+    };
+    playing.current = false;
+    sync();
+    if (active && !mounted) setMounted(true);
+    if (active && mounted)
+      timer = setTimeout(() => {
+        playing.current = true;
+        sync();
+      }, delay);
+    window.addEventListener("message", ready);
+    return () => {
+      clearTimeout(timer);
+      playing.current = false;
+      currentVideo?.pause();
+      command("pause");
+      window.removeEventListener("message", ready);
+    };
+  }, [active, delay, mounted]);
   return (
     <button
-      ref={button}
       className="archive-film"
       style={{ aspectRatio: film.aspectRatio }}
       aria-label={`Open ${title} — ${film.label}`}
-      onPointerEnter={(event) => startPreview(event.pointerType)}
-      onPointerMove={(event) => startPreview(event.pointerType)}
-      onPointerLeave={() => setPreview(false)}
-      onClick={() => {
-        setPreview(false);
-        onOpen();
-      }}
+      onClick={onOpen}
     >
       <img src={film.poster} alt="" loading="lazy" decoding="async" />
-      {preview &&
+      {mounted &&
         (film.source.type === "local" ? (
           <video
+            ref={video}
             src={film.source.preview}
             poster={film.poster}
-            autoPlay
             muted
             loop
             playsInline
             preload="none"
-            onError={() => setPreview(false)}
+            onError={(event) => {
+              event.currentTarget.style.visibility = "hidden";
+            }}
           />
         ) : (
           <iframe
-            src={`https://player.vimeo.com/video/${film.source.id}?background=1&autoplay=1&loop=1&muted=1&playsinline=1`}
+            ref={iframe}
+            src={`https://player.vimeo.com/video/${film.source.id}?background=1&autoplay=0&loop=1&muted=1&playsinline=1&autopause=0`}
             title={`${title} silent preview`}
             allow="autoplay"
             tabIndex={-1}
@@ -72,7 +99,7 @@ function FilmPreview({
           />
         ))}
       <span className="archive-view" aria-hidden="true">
-        VIEW ↗
+        OPEN ↗
       </span>
     </button>
   );
@@ -138,14 +165,13 @@ function ArchiveFile({
             src={film.source.src}
             poster={film.poster}
             controls
-            autoPlay
             playsInline
             preload="metadata"
           />
         ) : (
           <iframe
             key={film.source.id}
-            src={`https://player.vimeo.com/video/${film.source.id}?autoplay=1&title=0&byline=0&portrait=0`}
+            src={`https://player.vimeo.com/video/${film.source.id}?autoplay=0&title=0&byline=0&portrait=0`}
             allow="autoplay; fullscreen; picture-in-picture"
             allowFullScreen
             title={project.title}
@@ -158,6 +184,7 @@ function ArchiveFile({
 
 export default function SelectedWork() {
   const [opened, setOpened] = useState<{ project: ArchiveProject; film: number } | null>(null);
+  const playback = useArchivePlayback(!!opened);
   return (
     <section id="work" className="dept-archive" aria-labelledby="archive-heading">
       <header className="archive-heading">
@@ -174,10 +201,11 @@ export default function SelectedWork() {
           </span>
         </div>
       </header>
-      <div className="archive-index">
+      <div className="archive-index" ref={playback.root}>
         {archiveProjects.map((project) => (
           <article
             key={project.id}
+            data-project={project.id}
             className={`archive-entry archive-${project.layout}`}
             aria-labelledby={`title-${project.id}`}
           >
@@ -194,6 +222,8 @@ export default function SelectedWork() {
                   )}
                   <FilmPreview
                     film={film}
+                    active={playback.active.includes(project.id)}
+                    delay={index * 650}
                     title={project.title}
                     onOpen={() => setOpened({ project, film: index })}
                   />

@@ -34,10 +34,12 @@ selects the Scribe label. No case-study route is fabricated: missing
 for OPEN FILE. Do not supply a URL until its destination exists.
 
 No archive video or Vimeo iframe mounts initially. Posters load lazily.
-Desktop mouse hover mounts one silent inline preview; leaving the frame,
-scrolling offscreen, hiding the tab, or enabling reduced motion removes it.
-Touch users tap a frame or OPEN FILE to open the full player with audio and
-controls. The series player has short-selection buttons. Escape/Close restores
-focus. Mobile uses full-width entries with two side-by-side native vertical frames
-inside one shared media area.
-The archive uses normal scrolling and adds no animation dependency.
+A shared IntersectionObserver reveals each project once (24px, 600ms, 80ms
+neighbor stagger). At 60% media visibility, after the reveal, up to two projects
+play silent previews. Short 02 begins 650ms after Short 01. Mounted players are
+retained and paused offscreen so they resume rather than restart. Vimeo uses its
+postMessage API; local clips use play/pause. Hidden tabs and open film dialogs
+pause previews. Reduced-motion visitors get stills with no entrance animation.
+Hover adds restrained brightness and OPEN feedback; touch needs no hover.
+Full films open with controls and require an explicit play action for audio.
+Escape/Close restores focus. The compact 3/2/1-column layout is unchanged.
