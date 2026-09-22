@@ -1,163 +1,246 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { archiveProjects, type ArchiveFilm, type ArchiveProject } from "./archive-projects";
+import "./archive.css";
 
-interface Project {
+function FilmPreview({
+  film,
+  title,
+  onOpen,
+}: {
+  film: ArchiveFilm;
   title: string;
-  category: string;
-  vimeoId: string;
-  previewVimeoId: string;
+  onOpen: () => void;
+}) {
+  const [preview, setPreview] = useState(false);
+  const button = useRef<HTMLButtonElement>(null);
+  const startPreview = (pointerType: string) => {
+    // Actual mouse input also works on laptops/tablets whose primary input is touch.
+    if (pointerType === "mouse" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      setPreview(true);
+  };
+  useEffect(() => {
+    const element = button.current;
+    if (!element) return;
+    const stop = () => setPreview(false);
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) stop();
+    });
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    observer.observe(element);
+    document.addEventListener("visibilitychange", stop);
+    reduced.addEventListener("change", stop);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", stop);
+      reduced.removeEventListener("change", stop);
+    };
+  }, []);
+  return (
+    <button
+      ref={button}
+      className="archive-film"
+      style={{ aspectRatio: film.aspectRatio }}
+      aria-label={`Open ${title} — ${film.label}`}
+      onPointerEnter={(event) => startPreview(event.pointerType)}
+      onPointerMove={(event) => startPreview(event.pointerType)}
+      onPointerLeave={() => setPreview(false)}
+      onClick={() => {
+        setPreview(false);
+        onOpen();
+      }}
+    >
+      <img src={film.poster} alt="" loading="lazy" decoding="async" />
+      {preview &&
+        (film.source.type === "local" ? (
+          <video
+            src={film.source.preview}
+            poster={film.poster}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="none"
+            onError={() => setPreview(false)}
+          />
+        ) : (
+          <iframe
+            src={`https://player.vimeo.com/video/${film.source.id}?background=1&autoplay=1&loop=1&muted=1&playsinline=1`}
+            title={`${title} silent preview`}
+            allow="autoplay"
+            tabIndex={-1}
+            aria-hidden="true"
+          />
+        ))}
+      <span className="archive-view" aria-hidden="true">
+        VIEW ↗
+      </span>
+    </button>
+  );
 }
 
-// Produced with Impact Loop: looping muted previews, click to play full film
-const projects: Project[] = [
-  {
-    title: "EmployNext: Youth Trades Program",
-    category: "Documentary / Program Film",
-    vimeoId: "1174716942",
-    previewVimeoId: "1174716942",
-  },
-  {
-    title: "Reddit AI Search Event Recap",
-    category: "Event Recap",
-    vimeoId: "1168847247",
-    previewVimeoId: "1168847247",
-  },
-  {
-    title: "Breathe Mindful Living",
-    category: "Brand Launch Film",
-    vimeoId: "1168844885",
-    previewVimeoId: "1168844885",
-  },
-  {
-    title: "Muamba Foundation × Bartley Skills Winnipeg",
-    category: "Event Recap",
-    vimeoId: "1159742453",
-    previewVimeoId: "1159742453",
-  },
-];
-
-function VimeoLightbox({
-  vimeoId,
+function ArchiveFile({
+  project,
+  initialFilm,
   onClose,
 }: {
-  vimeoId: string | null;
+  project: ArchiveProject;
+  initialFilm: number;
   onClose: () => void;
 }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [filmIndex, setFilmIndex] = useState(initialFilm);
+  const film = project.films[filmIndex]!;
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    if (vimeoId) {
-      document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden";
-    }
+    const element = dialog.current;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    element?.showModal();
+    document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
+      element?.close();
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus({ preventScroll: true });
     };
-  }, [vimeoId, onClose]);
-
-  if (!vimeoId) return null;
-
+  }, []);
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
-      <div className="absolute inset-0 bg-black/95" onClick={onClose} />
-      <button
-        onClick={onClose}
-        aria-label="Close video"
-        className="absolute top-4 right-4 md:top-8 md:right-8 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors duration-300 text-white text-xl leading-none"
-      >
-        &#215;
-      </button>
-      <div className="relative z-10 w-full max-w-5xl aspect-video">
-        <iframe
-          src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&title=0&byline=0&portrait=0`}
-          className="w-full h-full"
-          allow="autoplay; fullscreen; picture-in-picture"
-          allowFullScreen
-          title="Video player"
-        />
+    <dialog
+      ref={dialog}
+      className="archive-dialog"
+      aria-labelledby="archive-file-title"
+      onCancel={onClose}
+    >
+      <div className="archive-dialog-top">
+        <span>{project.id} / OPEN FILE</span>
+        <button autoFocus onClick={onClose} aria-label="Close archive film">
+          CLOSE ×
+        </button>
       </div>
-    </div>
+      <h2 id="archive-file-title">{project.title}</h2>
+      {project.films.length > 1 && (
+        <div className="archive-film-picker" aria-label="Choose a short">
+          {project.films.map((item, index) => (
+            <button
+              key={item.label}
+              aria-pressed={index === filmIndex}
+              onClick={() => setFilmIndex(index)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
+      <div
+        className={`archive-player ${project.films.length > 1 ? "archive-player-vertical" : ""}`}
+      >
+        {film.source.type === "local" ? (
+          <video
+            key={film.source.src}
+            src={film.source.src}
+            poster={film.poster}
+            controls
+            autoPlay
+            playsInline
+            preload="metadata"
+          />
+        ) : (
+          <iframe
+            key={film.source.id}
+            src={`https://player.vimeo.com/video/${film.source.id}?autoplay=1&title=0&byline=0&portrait=0`}
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+            title={project.title}
+          />
+        )}
+      </div>
+    </dialog>
   );
 }
 
 export default function SelectedWork() {
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-
+  const [opened, setOpened] = useState<{ project: ArchiveProject; film: number } | null>(null);
   return (
-    <section id="work" className="pt-10 pb-24 md:pb-32">
-      <div className="wrap">
-        <div className="flex items-baseline justify-between mb-8">
-          <span className="label">Selected Work</span>
-          <a
-            href="#contact"
-            className="inline-flex items-center gap-3 text-[10px] uppercase font-normal tracking-[0.25em] text-ink-dim no-underline transition-all duration-300 hover:text-ink hover:gap-5"
+    <section id="work" className="dept-archive" aria-labelledby="archive-heading">
+      <header className="archive-heading">
+        <p className="archive-meta">03 / SELECTED WORK</p>
+        <h2 id="archive-heading">
+          DEPT.
+          <br />
+          <span>ARCHIVE</span>
+        </h2>
+        <div className="archive-heading-bottom">
+          <p className="archive-meta">FILMS / STORIES / OBSERVATIONS</p>
+          <span className="archive-meta">
+            INDEX / {String(archiveProjects.length).padStart(2, "0")} FILES
+          </span>
+        </div>
+      </header>
+      <div className="archive-index">
+        {archiveProjects.map((project) => (
+          <article
+            key={project.id}
+            className={`archive-entry archive-${project.layout}`}
+            aria-labelledby={`title-${project.id}`}
           >
-            Work With Riann <span aria-hidden>&#8594;</span>
-          </a>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[10px] gap-y-12">
-          {projects.map((p) => (
-            <button
-              key={p.vimeoId}
-              type="button"
-              onClick={() => setSelectedVideo(p.vimeoId)}
-              className="group block text-left no-underline text-ink cursor-pointer bg-transparent border-0 p-0"
-            >
-              <div
-                className="relative overflow-hidden bg-black"
-                style={{ aspectRatio: "2.35 / 1" }}
-              >
-                {/* Looping muted Vimeo preview */}
-                <iframe
-                  src={`https://player.vimeo.com/video/${p.previewVimeoId}?background=1&autoplay=1&loop=1&muted=1`}
-                  className="absolute pointer-events-none"
-                  style={{
-                    border: 0,
-                    width: "140%",
-                    height: "140%",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                  }}
-                  allow="autoplay"
-                  title={`${p.title} preview`}
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-bg/20 via-transparent to-bg/30 group-hover:opacity-0 transition-opacity duration-500" />
-                {/* Play hint on hover */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
-                    <svg
-                      viewBox="0 0 24 24"
-                      className="w-5 h-5 text-white ml-0.5"
-                      fill="currentColor"
-                      aria-hidden
-                    >
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </div>
+            <div className="archive-entry-top">
+              <span className="archive-id">{project.id}</span>
+              <span className="archive-meta">
+                {project.status === "original"
+                  ? project.department === "THE SCRIBE DEPT."
+                    ? "A SCRIBE DEPT. ORIGINAL SERIES"
+                    : "A DEPT. COLLECTIVE FILM"
+                  : "SELECTED WORK"}
+              </span>
+            </div>
+            <div className="archive-films">
+              {project.films.map((film, index) => (
+                <div className="archive-film-wrap" key={film.label}>
+                  {project.films.length > 1 && (
+                    <p className="archive-meta archive-short-label">{film.label}</p>
+                  )}
+                  <FilmPreview
+                    film={film}
+                    title={project.title}
+                    onOpen={() => setOpened({ project, film: index })}
+                  />
                 </div>
+              ))}
+            </div>
+            <div className="archive-caption">
+              <div>
+                <h3 id={`title-${project.id}`}>{project.title}</h3>
+                <p className="archive-meta">
+                  {[project.category, project.location, project.year].filter(Boolean).join(" / ")}
+                </p>
+                {(project.role || project.productionCredit) && (
+                  <p className="archive-meta archive-credit">
+                    {[project.role, project.productionCredit].filter(Boolean).join(" · ")}
+                  </p>
+                )}
               </div>
-              <div className="mt-5">
-                <h3 className="text-[13px] uppercase font-normal tracking-[0.14em] text-ink transition-colors duration-300 group-hover:text-accent">
-                  {p.title}
-                </h3>
-                <div className="mt-2 flex items-center justify-between">
-                  <span className="text-[8.5px] uppercase tracking-wide2 text-ink-faint">
-                    {p.category}
-                  </span>
-                  <span className="text-[10px] tracking-[0.1em] text-ink-faint">
-                    Watch &#8594;
-                  </span>
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
+              {project.caseStudyUrl ? (
+                <a className="archive-open" href={project.caseStudyUrl}>
+                  OPEN FILE ↗
+                </a>
+              ) : (
+                <button
+                  className="archive-open"
+                  aria-label={`Open file: ${project.title}`}
+                  onClick={() => setOpened({ project, film: 0 })}
+                >
+                  OPEN FILE ↗
+                </button>
+              )}
+            </div>
+          </article>
+        ))}
       </div>
-
-      <VimeoLightbox vimeoId={selectedVideo} onClose={() => setSelectedVideo(null)} />
+      {opened && (
+        <ArchiveFile
+          project={opened.project}
+          initialFilm={opened.film}
+          onClose={() => setOpened(null)}
+        />
+      )}
     </section>
   );
 }

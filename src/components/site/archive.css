@@ -1,0 +1,324 @@
+.dept-archive {
+  color: #d3c3a5;
+  font-family: "Satoshi Variable", sans-serif;
+  padding: 100px 5% 140px;
+  scroll-margin-top: 100px;
+}
+.archive-meta {
+  font-size: 10px;
+  line-height: 1.7;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.archive-heading {
+  padding-bottom: 120px;
+}
+.archive-heading h2 {
+  font-size: clamp(80px, 15.5vw, 240px);
+  font-weight: 800;
+  letter-spacing: -0.065em;
+  line-height: 0.83;
+  margin: 65px 0 50px;
+}
+.archive-heading h2 span {
+  margin-left: 17%;
+}
+.archive-heading-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+.archive-heading-bottom > span {
+  opacity: 0.5;
+}
+.archive-entry {
+  margin-bottom: 150px;
+}
+.archive-entry-top {
+  border-top: 1px solid #d3c3a52b;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0 26px;
+  gap: 20px;
+}
+.archive-id {
+  font-size: 24px;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+}
+.archive-entry-top > .archive-meta {
+  opacity: 0.65;
+}
+.archive-wide {
+  width: 94%;
+}
+.archive-right {
+  width: 66%;
+  margin-left: auto;
+}
+.archive-left {
+  width: 72%;
+  margin-top: 30px;
+}
+.archive-series {
+  width: 100%;
+  margin-bottom: 180px;
+}
+.archive-series .archive-films {
+  display: flex;
+  gap: 9%;
+  padding: 15px 11% 0;
+}
+.archive-series .archive-film-wrap {
+  width: 42%;
+  max-width: 385px;
+}
+.archive-series .archive-film-wrap:nth-child(2) {
+  margin-top: 130px;
+}
+.archive-short-label {
+  margin-bottom: 14px;
+  opacity: 0.65;
+}
+.archive-film {
+  width: 100%;
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background: #111;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: #d3c3a5;
+}
+.archive-film img,
+.archive-film video,
+.archive-film iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border: 0;
+  pointer-events: none;
+}
+.archive-view {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  background: #0a0a0a;
+  padding: 12px 15px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.archive-film:hover .archive-view,
+.archive-film:focus-visible .archive-view {
+  opacity: 1;
+}
+.archive-film:focus-visible,
+.archive-open:focus-visible {
+  outline: 1px solid #d3c3a5;
+  outline-offset: 5px;
+}
+.archive-caption {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  padding-top: 24px;
+}
+.archive-caption h3 {
+  font-size: clamp(24px, 3vw, 45px);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  margin: 0 0 15px;
+  max-width: 720px;
+}
+.archive-caption .archive-meta {
+  opacity: 0.7;
+}
+.archive-caption .archive-credit {
+  opacity: 0.45;
+  font-size: 9px;
+  margin-top: 8px;
+}
+.archive-series .archive-caption {
+  padding-top: 45px;
+}
+.archive-series h3 {
+  font-size: clamp(38px, 6vw, 88px);
+  font-weight: 700;
+}
+.archive-open {
+  background: none;
+  border: 0;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 10px 0;
+  min-height: 44px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+.archive-open:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.archive-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  border: 1px solid #d3c3a533;
+  background: #0a0a0a;
+  color: #d3c3a5;
+  width: min(1100px, 94vw);
+  max-height: 94svh;
+  padding: 24px;
+  font-family: "Satoshi Variable", sans-serif;
+}
+.archive-dialog::backdrop {
+  background: #000e;
+}
+.archive-dialog-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+.archive-dialog button {
+  cursor: pointer;
+  padding: 12px;
+  background: transparent;
+  color: inherit;
+  border: 1px solid transparent;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.archive-dialog button:focus-visible {
+  outline: 1px solid #d3c3a5;
+}
+.archive-dialog h2 {
+  font-size: 24px;
+  letter-spacing: -0.035em;
+  margin: 8px 0 16px;
+}
+.archive-film-picker {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.archive-film-picker button[aria-pressed="true"] {
+  border-color: #d3c3a54d;
+}
+.archive-player {
+  aspect-ratio: 16/9;
+  max-height: 70svh;
+  margin: auto;
+}
+.archive-player-vertical {
+  aspect-ratio: 9/16;
+  height: 65svh;
+  width: auto;
+}
+.archive-player video,
+.archive-player iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: contain;
+}
+@media (max-width: 700px) {
+  .dept-archive {
+    padding: 70px 5% 60px;
+  }
+  .archive-heading {
+    padding-bottom: 70px;
+  }
+  .archive-heading h2 {
+    font-size: 18vw;
+    margin: 45px 0 35px;
+  }
+  .archive-heading h2 span {
+    margin-left: 8%;
+  }
+  .archive-heading-bottom {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .archive-entry,
+  .archive-wide,
+  .archive-right,
+  .archive-left {
+    width: 100%;
+    margin: 0 0 90px;
+  }
+  .archive-entry-top {
+    gap: 16px;
+  }
+  .archive-entry-top > .archive-meta {
+    text-align: right;
+    font-size: 8px;
+    max-width: 180px;
+  }
+  .archive-id {
+    font-size: 22px;
+  }
+  .archive-series .archive-films {
+    padding: 0;
+    gap: 5%;
+  }
+  .archive-series .archive-film-wrap {
+    width: 47.5%;
+  }
+  .archive-series .archive-film-wrap:nth-child(2) {
+    margin-top: 70px;
+  }
+  .archive-short-label {
+    font-size: 8px;
+    letter-spacing: 0.04em;
+  }
+  .archive-caption {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .archive-caption h3 {
+    font-size: 28px;
+  }
+  .archive-series h3 {
+    font-size: 42px;
+  }
+  .archive-meta {
+    font-size: 9px;
+  }
+  .archive-view {
+    opacity: 1;
+    right: 8px;
+    bottom: 8px;
+    padding: 8px;
+    font-size: 8px;
+  }
+  .archive-dialog {
+    padding: 16px;
+  }
+  .archive-dialog h2 {
+    font-size: 20px;
+  }
+  .archive-film-picker {
+    gap: 2px;
+  }
+  .archive-film-picker button {
+    font-size: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .archive-view {
+    transition: none;
+  }
+}
