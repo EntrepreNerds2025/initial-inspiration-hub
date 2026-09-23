@@ -1,0 +1,131 @@
+.dept-collective {
+  padding: clamp(100px, 13vw, 200px) 5% clamp(100px, 12vw, 180px);
+  color: #d3c3a5;
+  font-family: "Satoshi Variable", sans-serif;
+  scroll-margin-top: 90px;
+}
+.collective-meta {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.9;
+  letter-spacing: 0.12em;
+}
+.collective-intro > .collective-meta {
+  margin-bottom: 40px;
+}
+.collective-intro h2 {
+  margin: 0;
+  font-size: clamp(48px, 7.5vw, 120px);
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 0.99;
+}
+.collective-intro h2 span {
+  display: block;
+}
+.collective-statement {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 8%;
+  margin-top: clamp(60px, 8vw, 120px);
+}
+.collective-studio-label {
+  padding-top: 6px;
+  opacity: 0.7;
+}
+.collective-copy {
+  max-width: 650px;
+}
+.collective-copy > p {
+  margin: 0 0 24px;
+  font-size: clamp(18px, 1.75vw, 26px);
+  line-height: 1.6;
+}
+.collective-belief {
+  margin-top: 44px;
+  font-size: clamp(20px, 2.1vw, 30px);
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.collective-belief p {
+  margin: 0 0 16px;
+}
+.collective-founder {
+  margin: clamp(80px, 10vw, 150px) 0 0 8%;
+  width: 54%;
+  max-width: 760px;
+}
+.collective-photo {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+.collective-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.collective-founder figcaption {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 24px;
+  border-top: 1px solid #d3c3a52b;
+  margin-top: 22px;
+  padding-top: 20px;
+}
+.collective-founder figcaption > .collective-meta:first-child {
+  grid-row: span 2;
+  opacity: 0.7;
+}
+.collective-founder h3 {
+  margin: 0;
+  font-size: clamp(20px, 2vw, 28px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.collective-principles {
+  margin: clamp(100px, 12vw, 180px) 0 0 33%;
+}
+.collective-principles p {
+  margin: 0;
+  font-size: clamp(34px, 5.9vw, 92px);
+  line-height: 1.1;
+  font-weight: 500;
+  letter-spacing: -0.045em;
+}
+@media (max-width: 767px) {
+  .dept-collective {
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
+  .collective-intro h2 {
+    font-size: clamp(36px, 9vw, 68px);
+  }
+  .collective-statement {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-top: 50px;
+  }
+  .collective-copy {
+    max-width: 36em;
+  }
+  .collective-belief {
+    margin-top: 34px;
+  }
+  .collective-founder {
+    width: 100%;
+    margin: 65px 0 0;
+  }
+  .collective-founder figcaption {
+    grid-template-columns: 1fr 1.35fr;
+  }
+  .collective-principles {
+    margin: 85px 0 0;
+  }
+  .collective-principles p {
+    font-size: clamp(30px, 9.4vw, 64px);
+  }
+}

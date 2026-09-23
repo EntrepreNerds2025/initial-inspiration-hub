@@ -3,20 +3,23 @@ import deptLogo from "@/assets/dept-logo-beige.png";
 
 const links = [
   { label: "Work", href: "#work" },
-  { label: "Director", href: "#director" },
-  { label: "Approach", href: "#approach" },
-  { label: "Journal", href: "#journal" },
+  { label: "Departments", href: "/departments" },
+  { label: "The Collective", href: "#director" },
   { label: "Contact", href: "#contact" },
 ];
 
-export default function Navbar() {
-  const [pastHero, setPastHero] = useState(false);
+export default function Navbar({ homePage = true }: { homePage?: boolean }) {
+  const [pastHero, setPastHero] = useState(!homePage);
   const [open, setOpen] = useState(false);
   const toggle = useRef<HTMLButtonElement>(null);
   const nav = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const onScroll = () => {
+      if (!homePage) {
+        setPastHero(true);
+        return;
+      }
       const hero = document.getElementById("top");
       const stage = hero?.querySelector<HTMLElement>(".dept-hero-stage");
       const end = hero ? hero.offsetHeight - (stage?.offsetHeight ?? window.innerHeight) : 0;
@@ -35,7 +38,7 @@ export default function Navbar() {
       window.removeEventListener("scroll", onScroll);
       document.removeEventListener("keydown", onKey);
     };
-  }, []);
+  }, [homePage]);
 
   return (
     <nav
@@ -48,7 +51,7 @@ export default function Navbar() {
     >
       <div className="dept-nav-bar">
         <a
-          href="#top"
+          href={homePage ? "#top" : "/#top"}
           className="dept-nav-brand"
           aria-label="Dept. Collective home"
           onClick={() => setOpen(false)}
@@ -67,7 +70,10 @@ export default function Navbar() {
         <ul id="dept-main-links" className="dept-nav-links">
           {links.map((link) => (
             <li key={link.href}>
-              <a href={link.href} onClick={() => setOpen(false)}>
+              <a
+                href={!homePage && link.href.startsWith("#") ? `/${link.href}` : link.href}
+                onClick={() => setOpen(false)}
+              >
                 {link.label}
               </a>
             </li>

@@ -5,9 +5,8 @@ import Navbar from "@/components/site/Navbar";
 import Hero from "@/components/site/Hero";
 import Manifesto from "@/components/site/Manifesto";
 import SelectedWork from "@/components/site/SelectedWork";
-import Approach from "@/components/site/Approach";
+import Capabilities from "@/components/site/Capabilities";
 import Director from "@/components/site/Director";
-import Journal from "@/components/site/Journal";
 import Contact from "@/components/site/Contact";
 import Footer from "@/components/site/Footer";
 
@@ -23,8 +22,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Riann Grant | The Department Collective" },
       {
         property: "og:description",
-        content:
-          "Director & cinematographer. Brand films, documentaries, and community stories.",
+        content: "Director & cinematographer. Brand films, documentaries, and community stories.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -52,7 +50,7 @@ function Index() {
             io.unobserve(e.target);
           }
         }),
-      { threshold: 0.12 }
+      { threshold: 0.12 },
     );
     document.querySelectorAll(".reveal:not(.on)").forEach((el) => io.observe(el));
     return () => io.disconnect();
@@ -65,9 +63,8 @@ function Index() {
         <Hero />
         <Manifesto />
         <SelectedWork />
-        <Approach />
+        <Capabilities />
         <Director />
-        <Journal />
         <Contact />
       </main>
       <Footer />
