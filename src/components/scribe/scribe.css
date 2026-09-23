@@ -1,0 +1,248 @@
+.scribe-page {
+  background: #0a0a0a;
+  color: #d3c3a5;
+  font-family: "Satoshi Variable", sans-serif;
+  min-height: 100svh;
+}
+.scribe-page a {
+  color: inherit;
+  text-decoration: none;
+}
+.scribe-page button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.scribe-page a:focus-visible,
+.scribe-page button:focus-visible {
+  outline: 1px solid #d3c3a5;
+  outline-offset: 6px;
+}
+.scribe-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  padding: 28px 4%;
+  border-bottom: 1px solid #d3c3a526;
+}
+.scribe-brand {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+.scribe-brand small {
+  display: block;
+  font-size: 7px;
+  letter-spacing: 0.09em;
+  font-weight: 400;
+  margin-top: 6px;
+}
+.scribe-header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.scribe-header nav a,
+.scribe-header nav button,
+.scribe-parent {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.scribe-page button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.scribe-feature {
+  position: relative;
+  min-height: calc(100svh - 104px);
+  display: flex;
+  align-items: center;
+  isolation: isolate;
+  overflow: hidden;
+}
+.scribe-feature-media {
+  position: absolute;
+  inset: 0 0 0 43%;
+  z-index: -2;
+}
+.scribe-feature-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.scribe-feature::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, #0a0a0a 20%, #0a0a0ab5 48%, #0a0a0a05 80%),
+    linear-gradient(0deg, #0a0a0a 0%, transparent 30%);
+}
+.scribe-feature-copy {
+  padding: 75px 5% 130px;
+  width: 70%;
+}
+.scribe-meta {
+  font-size: 10px;
+  line-height: 1.8;
+  letter-spacing: 0.12em;
+  margin: 0;
+}
+.scribe-feature h1 {
+  font-size: clamp(65px, 9.8vw, 155px);
+  line-height: 0.9;
+  letter-spacing: -0.065em;
+  font-weight: 800;
+  margin: 26px 0 30px;
+}
+.scribe-feature h1 span {
+  display: block;
+}
+.scribe-synopsis {
+  max-width: 355px;
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 24px 0 30px;
+}
+.scribe-actions {
+  display: flex;
+  align-items: start;
+  gap: 36px;
+}
+.scribe-actions .scribe-watch {
+  font-size: 21px;
+  font-weight: 600;
+  border-bottom: 1px solid #d3c3a5;
+  padding: 10px 0;
+  min-height: 48px;
+}
+.scribe-actions .scribe-watch:hover {
+  color: #fff0d6;
+}
+.scribe-actions > a,
+.scribe-upcoming button {
+  font-size: 11px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+.scribe-upcoming small {
+  display: block;
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+}
+.scribe-film-credit {
+  margin-top: 18px;
+  opacity: 0.7;
+  font-size: 8px;
+}
+.scribe-feature-bottom {
+  position: absolute;
+  bottom: 25px;
+  left: 5%;
+  right: 5%;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  border-top: 1px solid #d3c3a533;
+  padding-top: 18px;
+}
+.scribe-player {
+  background: #0a0a0a;
+  color: #d3c3a5;
+  border: 1px solid #d3c3a54d;
+  padding: 24px;
+  width: min(900px, 94vw);
+  max-height: 94svh;
+  margin: auto;
+}
+.scribe-player::backdrop {
+  background: #000e;
+}
+.scribe-player-close {
+  display: block;
+  margin-left: auto;
+  min-height: 44px;
+}
+.scribe-player video {
+  display: block;
+  width: 100%;
+  height: 70svh;
+  object-fit: contain;
+  margin-top: 16px;
+}
+.scribe-player iframe {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: 0;
+}
+@media (max-width: 1050px) {
+  .scribe-header {
+    flex-wrap: wrap;
+  }
+  .scribe-header nav {
+    order: 3;
+    width: 100%;
+    gap: 24px;
+  }
+}
+@media (max-width: 767px) {
+  .scribe-header {
+    padding: 20px 5% 8px;
+    gap: 14px;
+  }
+  .scribe-brand {
+    font-size: 18px;
+  }
+  .scribe-parent {
+    font-size: 8px;
+  }
+  .scribe-header nav {
+    gap: 8px 20px;
+  }
+  .scribe-header nav a,
+  .scribe-header nav button {
+    font-size: 8px;
+  }
+  .scribe-feature {
+    min-height: 850px;
+    align-items: end;
+  }
+  .scribe-feature-media {
+    inset: 0 0 auto;
+    height: 520px;
+  }
+  .scribe-feature::after {
+    background: linear-gradient(0deg, #0a0a0a 15%, #0a0a0a 34%, transparent 78%);
+  }
+  .scribe-feature-copy {
+    width: 100%;
+    padding: 330px 5% 115px;
+  }
+  .scribe-feature h1 {
+    font-size: clamp(55px, 14.4vw, 104px);
+  }
+  .scribe-synopsis {
+    font-size: 15px;
+  }
+  .scribe-actions {
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .scribe-feature-bottom {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 7px;
+  }
+}

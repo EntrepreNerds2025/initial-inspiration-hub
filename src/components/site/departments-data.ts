@@ -21,6 +21,6 @@ export const departments: Department[] = [
       caption: "YOUR RESPONSE? / A SCRIBE DEPT. ORIGINAL",
     },
     route: "/departments/scribe",
-    status: "planned",
+    status: "published",
   },
 ];

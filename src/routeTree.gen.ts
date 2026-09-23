@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DepartmentsRouteImport } from './routes/departments'
+import { Route as DepartmentsScribeRouteImport } from './routes/departments_.scribe'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,40 @@ const DepartmentsRoute = DepartmentsRouteImport.update({
   path: '/departments',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DepartmentsScribeRoute = DepartmentsScribeRouteImport.update({
+  id: '/departments_/scribe',
+  path: '/departments/scribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
+  '/departments/scribe': typeof DepartmentsScribeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
+  '/departments/scribe': typeof DepartmentsScribeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
+  '/departments_/scribe': typeof DepartmentsScribeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/departments'
+  fullPaths: '/' | '/departments' | '/departments/scribe'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/departments'
-  id: '__root__' | '/' | '/departments'
+  to: '/' | '/departments' | '/departments/scribe'
+  id: '__root__' | '/' | '/departments' | '/departments_/scribe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DepartmentsRoute: typeof DepartmentsRoute
+  DepartmentsScribeRoute: typeof DepartmentsScribeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DepartmentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/departments_/scribe': {
+      id: '/departments_/scribe'
+      path: '/departments/scribe'
+      fullPath: '/departments/scribe'
+      preLoaderRoute: typeof DepartmentsScribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DepartmentsRoute: DepartmentsRoute,
+  DepartmentsScribeRoute: DepartmentsScribeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
