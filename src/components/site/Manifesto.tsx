@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { manifestoMedia } from "./manifesto-media";
 import "./manifesto.css";
+import ProjectInquiry from "./ProjectInquiry";
 
 const beats = [
   { text: "STORIES ARE EVERYWHERE.", start: 0.035, end: 0.19, subject: false },
@@ -19,13 +20,12 @@ const smooth = (start: number, end: number, progress: number) => {
 export default function Manifesto() {
   const section = useRef<HTMLElement>(null);
   const timecode = useRef<HTMLOutputElement>(null);
-  const [paused, setPaused] = useState(false);
-  const hasVideo = manifestoMedia.some((media) => media.video);
 
   useEffect(() => {
     const root = section.current;
     if (!root) return;
     const stage = root.querySelector<HTMLElement>(".manifesto-stage");
+    const inquiry = root.querySelector<HTMLElement>(".manifesto-inquiry");
     const statements = root.querySelectorAll<HTMLElement>(".manifesto-beat");
     const layers = root.querySelectorAll<HTMLElement>(".manifesto-media-layer");
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -43,6 +43,9 @@ export default function Manifesto() {
       );
       const active = bounds.top <= 1 && bounds.bottom >= 0 && !reduced.matches;
       if (stage) stage.inert = !active;
+      const inquiryOpacity = smooth(0.07, 0.12, progress) * (1 - smooth(0.9, 0.96, progress));
+      root.style.setProperty("--manifesto-inquiry", String(inquiryOpacity));
+      if (inquiry) inquiry.inert = !active || inquiryOpacity < 0.1;
       root.style.setProperty("--manifesto-visible", active ? "1" : "0");
       root.style.setProperty("--manifesto-shade", String(smooth(0.01, 0.075, progress) * 0.38));
       root.style.setProperty("--manifesto-black", String(smooth(0.9, 1, progress)));
@@ -82,8 +85,7 @@ export default function Manifesto() {
           (media, candidate) => candidate > index && !!media.video,
         );
         const next = nextIndex < 0 ? 1 : (mediaStarts[nextIndex] ?? 1);
-        const playing =
-          active && progress >= start && progress <= next + 0.04 && !paused && !document.hidden;
+        const playing = active && progress >= start && progress <= next + 0.04 && !document.hidden;
         if (playing && video.paused) void video.play().catch(() => {});
         else if (!playing) video.pause();
       });
@@ -110,7 +112,7 @@ export default function Manifesto() {
       reduced.removeEventListener("change", schedule);
       layers.forEach((layer) => layer.querySelector("video")?.pause());
     };
-  }, [paused]);
+  }, []);
 
   return (
     <section className="dept-manifesto" aria-label="The Dept. Collective manifesto">
@@ -185,19 +187,16 @@ export default function Manifesto() {
             <span>DC / MOTION STUDY 001</span>
             <output ref={timecode}>00:00:00:00</output>
           </div>
-          {hasVideo && (
-            <button
-              className="manifesto-pause"
-              type="button"
-              onClick={() => setPaused(!paused)}
-              aria-pressed={paused}
-            >
-              {paused ? "RESUME MOTION" : "PAUSE MOTION"}
-            </button>
-          )}
+          <div className="manifesto-inquiry" inert>
+            <ProjectInquiry />
+          </div>
         </div>
       </section>
       <div className="manifesto-closing">
+        <div className="manifesto-project-invitation">
+          <p>HAVE A PROJECT IN MIND?</p>
+          <ProjectInquiry prominent />
+        </div>
         <span className="manifesto-label">02 / THE DEPT.</span>
         <h2>
           WE DON&apos;T JUST

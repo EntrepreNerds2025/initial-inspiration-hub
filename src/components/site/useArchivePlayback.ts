@@ -1,71 +1,75 @@
 import { useEffect, useRef, useState } from "react";
 
-// One observer coordinates the contact sheet; at most two projects play at once.
+// Prepare rows near the viewport, then keep every prepared preview playing.
 export function useArchivePlayback(blocked: boolean) {
   const root = useRef<HTMLDivElement>(null);
+  const prepared = useRef(new Set<string>());
   const [active, setActive] = useState<string[]>([]);
   useEffect(() => {
     const container = root.current;
     if (!container) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const ratios = new Map<HTMLElement, number>();
-    const readyAt = new Map<HTMLElement, number>();
-    const timers = new Set<ReturnType<typeof setTimeout>>();
     const entries = Array.from(container.querySelectorAll<HTMLElement>(".archive-entry"));
-    entries.forEach((entry) => {
-      if (!entry.dataset["revealed"]) entry.dataset["revealed"] = "false";
-    });
+    const columns = () => getComputedStyle(container).gridTemplateColumns.split(" ").length;
+    const rowFor = (entry: HTMLElement) => {
+      const count = columns();
+      const start = Math.floor(entries.indexOf(entry) / count) * count;
+      return entries.slice(start, start + count);
+    };
     const update = () => {
-      if (reduced.matches)
-        entries.forEach((entry) => {
-          entry.dataset["revealed"] = "true";
-        });
-      const selected =
-        blocked || document.hidden || reduced.matches
-          ? []
-          : [...ratios]
-              .filter(
-                ([entry, ratio]) =>
-                  ratio >= 0.6 && performance.now() >= (readyAt.get(entry) ?? Infinity),
-              )
-              .sort((a, b) => b[1] - a[1])
-              .slice(0, 2)
-              .map(([entry]) => entry.dataset["project"]!);
+      const selected = blocked || document.hidden ? [] : [...prepared.current];
       setActive((previous) => (previous.join() === selected.join() ? previous : selected));
     };
-    const observer = new IntersectionObserver(
+    const configure = () => {
+      entries.forEach((entry, index) => {
+        const initial = index < columns();
+        entry.dataset["initialRow"] = String(initial);
+        if (initial || reduced.matches) entry.dataset["revealed"] = "true";
+        else if (!entry.dataset["revealed"]) entry.dataset["revealed"] = "false";
+        entry.style.setProperty("--archive-reveal-delay", `${(index % columns()) * 60}ms`);
+      });
+    };
+    configure();
+    const prepare = new IntersectionObserver(
       (changes) => {
         changes.forEach((change) => {
+          if (!change.isIntersecting) return;
           const entry = change.target.closest<HTMLElement>(".archive-entry")!;
-          ratios.set(entry, change.intersectionRatio);
-          if (change.intersectionRatio >= 0.15 && !readyAt.has(entry)) {
-            const alreadyRevealed = entry.dataset["revealed"] === "true";
-            const columns = getComputedStyle(container).gridTemplateColumns.split(" ").length;
-            const delay =
-              alreadyRevealed || reduced.matches ? 0 : (entries.indexOf(entry) % columns) * 80;
-            entry.style.setProperty("--archive-reveal-delay", `${delay}ms`);
-            entry.dataset["revealed"] = "true";
-            const duration = alreadyRevealed || reduced.matches ? 0 : 600 + delay;
-            readyAt.set(entry, performance.now() + duration);
-            timers.add(setTimeout(update, duration + 20));
-          }
+          rowFor(entry).forEach((item) => prepared.current.add(item.dataset["project"]!));
         });
         update();
       },
-      { threshold: [0, 0.15, 0.6, 0.8, 1] },
+      { rootMargin: "0px 0px 600px 0px", threshold: 0 },
+    );
+    const reveal = new IntersectionObserver(
+      (changes) => {
+        changes.forEach((change) => {
+          if (!change.isIntersecting) return;
+          const entry = change.target.closest<HTMLElement>(".archive-entry")!;
+          rowFor(entry).forEach((item) => {
+            item.dataset["revealed"] = "true";
+          });
+        });
+      },
+      { threshold: 0.08 },
     );
     entries.forEach((entry) => {
       const media = entry.querySelector(".archive-films");
-      if (media) observer.observe(media);
+      if (media) {
+        prepare.observe(media);
+        reveal.observe(media);
+      }
     });
     document.addEventListener("visibilitychange", update);
-    reduced.addEventListener("change", update);
+    window.addEventListener("resize", configure);
+    reduced.addEventListener("change", configure);
     update();
     return () => {
-      observer.disconnect();
-      timers.forEach(clearTimeout);
+      prepare.disconnect();
+      reveal.disconnect();
       document.removeEventListener("visibilitychange", update);
-      reduced.removeEventListener("change", update);
+      window.removeEventListener("resize", configure);
+      reduced.removeEventListener("change", configure);
     };
   }, [blocked]);
   return { root, active };

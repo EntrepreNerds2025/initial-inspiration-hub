@@ -223,7 +223,7 @@ export default function SelectedWork() {
                   <FilmPreview
                     film={film}
                     active={playback.active.includes(project.id)}
-                    delay={index * 650}
+                    delay={0}
                     title={project.title}
                     onOpen={() => setOpened({ project, film: index })}
                   />

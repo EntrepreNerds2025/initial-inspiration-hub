@@ -33,13 +33,12 @@ selects the Scribe label. No case-study route is fabricated: missing
 `caseStudyUrl` opens the accessible film dialog. A supplied URL takes precedence
 for OPEN FILE. Do not supply a URL until its destination exists.
 
-No archive video or Vimeo iframe mounts initially. Posters load lazily.
-A shared IntersectionObserver reveals each project once (24px, 600ms, 80ms
-neighbor stagger). At 60% media visibility, after the reveal, up to two projects
-play silent previews. Short 02 begins 650ms after Short 01. Mounted players are
-retained and paused offscreen so they resume rather than restart. Vimeo uses its
-postMessage API; local clips use play/pause. Hidden tabs and open film dialogs
-pause previews. Reduced-motion visitors get stills with no entrance animation.
-Hover adds restrained brightness and OPEN feedback; touch needs no hover.
-Full films open with controls and require an explicit play action for audio.
-Escape/Close restores focus. The compact 3/2/1-column layout is unchanged.
+Archive rows prepare media within 600px below the viewport. All prepared previews
+play simultaneously, muted and looping, with no project limit or hover requirement.
+Players stay mounted and playing as the page is explored; hidden tabs and open
+film dialogs pause background previews. Vimeo autopause is disabled.
+The initial responsive row (3 desktop / 2 tablet / 1 mobile) is visible immediately.
+Later rows reveal once with a 56px upward movement over 750ms and 60ms neighbor
+stagger; mobile uses 40px / 600ms. Reduced motion removes the entrance movement,
+while preserving muted playback. Posters remain fallbacks while media loads.
+Full films require an explicit play action for audio. Layout and IDs are unchanged.

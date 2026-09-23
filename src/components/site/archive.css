@@ -287,13 +287,13 @@
 /* Interaction only: keep the contact-sheet geometry unchanged. */
 .archive-entry[data-revealed] {
   transition:
-    opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 750ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 750ms cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--archive-reveal-delay, 0ms);
 }
 .archive-entry[data-revealed="false"] {
   opacity: 0;
-  transform: translateY(24px);
+  transform: translateY(56px);
 }
 .archive-entry[data-revealed="true"],
 .archive-entry:focus-within {
@@ -319,5 +319,19 @@
   .archive-entry[data-revealed="false"] {
     opacity: 1;
     transform: none;
+  }
+}
+
+.archive-entry[data-initial-row="true"] {
+  transition: none;
+  opacity: 1;
+  transform: none;
+}
+@media (max-width: 700px) and (prefers-reduced-motion: no-preference) {
+  .archive-entry[data-revealed] {
+    transition-duration: 600ms;
+  }
+  .archive-entry[data-revealed="false"] {
+    transform: translateY(40px);
   }
 }
