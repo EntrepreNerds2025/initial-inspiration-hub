@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DepartmentsRouteImport } from './routes/departments'
+import { Route as PackagesRouteImport } from './routes/packages'
 import { Route as DepartmentsScribeRouteImport } from './routes/departments_.scribe'
+import { Route as DepartmentsScribeYourResponseRouteImport } from './routes/departments_.scribe_.your-response'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,40 +25,75 @@ const DepartmentsRoute = DepartmentsRouteImport.update({
   path: '/departments',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PackagesRoute = PackagesRouteImport.update({
+  id: '/packages',
+  path: '/packages',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DepartmentsScribeRoute = DepartmentsScribeRouteImport.update({
   id: '/departments_/scribe',
   path: '/departments/scribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DepartmentsScribeYourResponseRoute =
+  DepartmentsScribeYourResponseRouteImport.update({
+    id: '/departments_/scribe_/your-response',
+    path: '/departments/scribe/your-response',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
+  '/packages': typeof PackagesRoute
   '/departments/scribe': typeof DepartmentsScribeRoute
+  '/departments/scribe/your-response': typeof DepartmentsScribeYourResponseRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
+  '/packages': typeof PackagesRoute
   '/departments/scribe': typeof DepartmentsScribeRoute
+  '/departments/scribe/your-response': typeof DepartmentsScribeYourResponseRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
+  '/packages': typeof PackagesRoute
   '/departments_/scribe': typeof DepartmentsScribeRoute
+  '/departments_/scribe_/your-response': typeof DepartmentsScribeYourResponseRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/departments' | '/departments/scribe'
+  fullPaths:
+    | '/'
+    | '/departments'
+    | '/packages'
+    | '/departments/scribe'
+    | '/departments/scribe/your-response'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/departments' | '/departments/scribe'
-  id: '__root__' | '/' | '/departments' | '/departments_/scribe'
+  to:
+    | '/'
+    | '/departments'
+    | '/packages'
+    | '/departments/scribe'
+    | '/departments/scribe/your-response'
+  id:
+    | '__root__'
+    | '/'
+    | '/departments'
+    | '/packages'
+    | '/departments_/scribe'
+    | '/departments_/scribe_/your-response'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DepartmentsRoute: typeof DepartmentsRoute
+  PackagesRoute: typeof PackagesRoute
   DepartmentsScribeRoute: typeof DepartmentsScribeRoute
+  DepartmentsScribeYourResponseRoute: typeof DepartmentsScribeYourResponseRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -75,11 +112,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DepartmentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/packages': {
+      id: '/packages'
+      path: '/packages'
+      fullPath: '/packages'
+      preLoaderRoute: typeof PackagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/departments_/scribe': {
       id: '/departments_/scribe'
       path: '/departments/scribe'
       fullPath: '/departments/scribe'
       preLoaderRoute: typeof DepartmentsScribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/departments_/scribe_/your-response': {
+      id: '/departments_/scribe_/your-response'
+      path: '/departments/scribe/your-response'
+      fullPath: '/departments/scribe/your-response'
+      preLoaderRoute: typeof DepartmentsScribeYourResponseRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -88,7 +139,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DepartmentsRoute: DepartmentsRoute,
+  PackagesRoute: PackagesRoute,
   DepartmentsScribeRoute: DepartmentsScribeRoute,
+  DepartmentsScribeYourResponseRoute: DepartmentsScribeYourResponseRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

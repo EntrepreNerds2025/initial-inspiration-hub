@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
 import Navbar from "@/components/site/Navbar";
 import ProjectInquiry from "@/components/site/ProjectInquiry";
 import { departments, type Department } from "@/components/site/departments-data";
@@ -21,54 +20,20 @@ export const Route = createFileRoute("/departments")({
 });
 
 function DepartmentEntry({ department }: { department: Department }) {
-  const frame = useRef<HTMLDivElement>(null);
-  const video = useRef<HTMLVideoElement>(null);
-  const [prepared, setPrepared] = useState(false);
-  const [active, setActive] = useState(false);
-  useEffect(() => {
-    const element = frame.current;
-    if (!element) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let visible = false;
-    const update = () => {
-      const play = visible && !reduced.matches && !document.hidden;
-      if (play) setPrepared(true);
-      setActive(play);
-    };
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        visible = (entry?.intersectionRatio ?? 0) >= 0.25;
-        update();
-      },
-      { threshold: [0, 0.25] },
-    );
-    observer.observe(element);
-    reduced.addEventListener("change", update);
-    document.addEventListener("visibilitychange", update);
-    return () => {
-      observer.disconnect();
-      reduced.removeEventListener("change", update);
-      document.removeEventListener("visibilitychange", update);
-    };
-  }, []);
-  useEffect(() => {
-    const element = video.current;
-    if (!element) return;
-    if (active) void element.play().catch(() => {});
-    else element.pause();
-    return () => element.pause();
-  }, [active, prepared]);
   return (
     <section className="department-entry" aria-labelledby={`department-${department.number}`}>
       <div className="department-entry-label">
         {department.number} / {department.name}
       </div>
-      <div className="department-composition">
+      <div className={`department-composition ${!department.media ? "department-text-only" : ""}`}>
         <div className="department-copy">
           <h2 id={`department-${department.number}`}>
-            {department.title[0]}
-            <br />
-            {department.title[1]}
+            {department.title.map((line, index) => (
+              <span key={line}>
+                {index > 0 && <br />}
+                {line}
+              </span>
+            ))}
           </h2>
           <p className="department-meta">{department.descriptor}</p>
           <p className="department-statement">
@@ -77,7 +42,7 @@ function DepartmentEntry({ department }: { department: Department }) {
             ))}
           </p>
           {department.status === "published" ? (
-            <a className="department-enter" href={department.route}>
+            <a className="department-enter" href={department.externalUrl ?? department.route}>
               ENTER DEPARTMENT ↗
             </a>
           ) : (
@@ -98,31 +63,14 @@ function DepartmentEntry({ department }: { department: Department }) {
             </>
           )}
         </div>
-        <figure className="department-film">
-          <div ref={frame} className="department-film-frame">
-            <img
-              src={department.media.poster}
-              alt="A frame from Your Response?, The Scribe Dept. worship documentary series"
-              loading="lazy"
-            />
-            {prepared && (
-              <video
-                ref={video}
-                src={department.media.preview}
-                poster={department.media.poster}
-                muted
-                loop
-                playsInline
-                preload="none"
-                aria-hidden="true"
-                onError={(event) => {
-                  event.currentTarget.style.display = "none";
-                }}
-              />
-            )}
-          </div>
-          <figcaption>{department.media.caption}</figcaption>
-        </figure>
+        {department.media && (
+          <figure className="department-film">
+            <div className="department-film-frame">
+              <img src={department.media.poster} alt={department.media.alt} loading="lazy" />
+            </div>
+            <figcaption>{department.media.caption}</figcaption>
+          </figure>
+        )}
       </div>
     </section>
   );
@@ -147,11 +95,11 @@ function DepartmentsPage() {
         </header>
         <div
           className="department-lineage"
-          aria-label="The Scribe Dept. is a department within Dept. Collective"
+          aria-label="The departments within the Dept. Collective ecosystem"
         >
           <span>DEPT. COLLECTIVE</span>
           <span aria-hidden="true">↓</span>
-          <span>THE SCRIBE DEPT.</span>
+          <span>THE SCRIBE DEPT. / DEARLY</span>
         </div>
         {departments.map((department) => (
           <DepartmentEntry key={department.number} department={department} />

@@ -1,0 +1,92 @@
+.scribe-series-intro {
+  padding: 65px 5% 55px;
+}
+.scribe-series-intro > .scribe-meta {
+  display: block;
+  margin-bottom: 35px;
+}
+.scribe-series-intro h1 {
+  font-size: clamp(45px, 8vw, 125px);
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+  font-weight: 800;
+  margin: 0 0 28px;
+}
+.scribe-series-theme {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+.scribe-series-intro .scribe-synopsis {
+  max-width: 530px;
+}
+.scribe-series-films {
+  padding: 0 5% 100px;
+}
+.scribe-series-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 1px solid #d3c3a533;
+  padding: 25px 0;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+.scribe-series-label h2 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+}
+.scribe-series-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 30px;
+  max-width: 980px;
+}
+.scribe-film-choice {
+  width: 100%;
+  text-align: left;
+  padding: 0;
+}
+.scribe-series-poster {
+  background: #101010;
+  height: clamp(300px, 40vw, 530px);
+  overflow: hidden;
+}
+.scribe-series-poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: filter 250ms ease;
+}
+.scribe-film-choice:hover img {
+  filter: brightness(1.1);
+}
+.scribe-film-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 20px 0;
+}
+@media (max-width: 600px) {
+  .scribe-series-grid {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .scribe-series-poster {
+    height: 110vw;
+    max-height: 600px;
+  }
+  .scribe-series-label {
+    flex-wrap: wrap;
+  }
+  .scribe-series-intro h1 {
+    font-size: 12vw;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scribe-series-poster img {
+    transition: none;
+  }
+}

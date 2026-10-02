@@ -7,6 +7,7 @@ import Manifesto from "@/components/site/Manifesto";
 import SelectedWork from "@/components/site/SelectedWork";
 import Capabilities from "@/components/site/Capabilities";
 import Director from "@/components/site/Director";
+import PackagesSection from "@/components/packages/PackagesSection";
 import Contact from "@/components/site/Contact";
 import Footer from "@/components/site/Footer";
 
@@ -65,6 +66,7 @@ function Index() {
         <SelectedWork />
         <Capabilities />
         <Director />
+        <PackagesSection />
         <Contact />
       </main>
       <Footer />

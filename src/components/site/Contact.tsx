@@ -1,4 +1,3 @@
-import { Send } from "lucide-react";
 import "./contact.css";
 
 const contactEmail = "hello@thedeptcollective.com";
@@ -6,17 +5,10 @@ const fieldClass = "contact-field";
 
 export default function Contact() {
   return (
-    <section id="contact" className="dept-contact" aria-labelledby="contact-heading">
-      <p className="contact-meta">06 / LET'S WORK TOGETHER</p>
-      <h2 id="contact-heading">
-        <span className="contact-question">HAVE A STORY?</span>
-        <span>LET'S GET</span>
-        <span>TO WORK.</span>
-      </h2>
-      <details className="contact-inquiry">
-        <summary className="contact-start">
-          START YOUR PROJECT <span aria-hidden="true">↗</span>
-        </summary>
+    <section id="contact" className="dept-contact" aria-labelledby="contact-inquiry-heading">
+      <div className="contact-inquiry" aria-labelledby="contact-inquiry-heading">
+        <h2 id="contact-inquiry-heading">WANT TO TALK IT THROUGH?</h2>
+        <p className="contact-inquiry-intro">Tell us a little about what you're thinking.</p>
         <form
           action={`https://formsubmit.co/${contactEmail}`}
           method="POST"
@@ -119,13 +111,13 @@ export default function Contact() {
             type="submit"
             className="mt-8 flex min-h-14 w-full items-center justify-center gap-3 bg-accent px-6 py-4 text-xs font-medium uppercase tracking-wide2 text-bg transition-colors hover:bg-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
           >
-            Send message <Send size={18} aria-hidden="true" />
+            START YOUR PROJECT <span aria-hidden="true">↗</span>
           </button>
           <p className="mt-4 text-xs leading-relaxed text-ink-dim">
             Your message is sent through FormSubmit. You may be asked to complete a spam check.
           </p>
         </form>
-      </details>
+      </div>
       <dl className="contact-information">
         <div>
           <dt>GENERAL INQUIRIES</dt>

@@ -246,3 +246,15 @@
     font-size: 7px;
   }
 }
+.scribe-player .scribe-watch-next {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 18px;
+  width: 100%;
+  min-height: 55px;
+  align-items: center;
+  padding: 20px 0 0;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}

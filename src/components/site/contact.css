@@ -221,3 +221,103 @@
 .dept-footer-socials a:focus-visible {
   opacity: 1;
 }
+
+.contact-packages {
+  margin-top: clamp(65px, 8vw, 115px);
+}
+.contact-packages .contact-meta {
+  margin-bottom: 22px;
+}
+.contact-packages h3,
+.contact-inquiry h3 {
+  font-size: clamp(26px, 3.2vw, 48px);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  margin: 0;
+}
+.contact-package-list {
+  list-style: none;
+  padding: 0;
+  margin: 35px 0 0;
+}
+.contact-package-list li {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  padding: 23px 0;
+  border-top: 1px solid #d3c3a52b;
+  font-size: clamp(18px, 2.2vw, 32px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+.contact-package-list li:last-child {
+  border-bottom: 1px solid #d3c3a52b;
+}
+.contact-package-number,
+.contact-package-price,
+.contact-package-currency {
+  font-size: 10px;
+  line-height: 1.8;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+}
+.contact-package-currency {
+  opacity: 0.7;
+  margin: 16px 0;
+}
+.contact-packages-link {
+  display: inline-flex;
+  gap: 30px;
+  align-items: center;
+  min-height: 48px;
+  padding: 12px 0;
+  border-bottom: 1px solid #d3c3a580;
+  color: inherit;
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+.contact-packages-link:hover {
+  border-color: #d3c3a5;
+}
+.contact-packages-link:focus-visible {
+  outline: 1px solid #d3c3a5;
+  outline-offset: 6px;
+}
+.contact-inquiry {
+  border-top: 1px solid #d3c3a52b;
+  padding-top: clamp(45px, 6vw, 85px);
+}
+.contact-inquiry-intro {
+  font-size: 17px;
+  line-height: 1.6;
+  margin: 22px 0 0;
+}
+@media (max-width: 600px) {
+  .contact-package-list li {
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 8px 12px;
+  }
+  .contact-package-price {
+    grid-column: 2;
+  }
+  .contact-packages-link {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.dept-contact .contact-inquiry {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+.dept-contact #contact-inquiry-heading {
+  font-size: clamp(26px, 3.2vw, 48px);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+  max-width: none;
+}

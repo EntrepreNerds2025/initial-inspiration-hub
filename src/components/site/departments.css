@@ -184,3 +184,7 @@
     align-items: flex-start;
   }
 }
+
+.department-composition.department-text-only {
+  grid-template-columns: 1fr;
+}

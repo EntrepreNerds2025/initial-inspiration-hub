@@ -42,13 +42,42 @@ export const featuredContent: ScribeContent = {
   },
   localFilm: "/media/archive/your-response-kiara.mp4",
   watchLabel: "SHORT 01 / KIARA",
+  duration: "0:40",
   featured: true,
+  seriesUrl: "/departments/scribe/your-response",
 };
 export const scribeNavigation: { label: string; href?: string }[] = [
   { label: "WATCH", href: "#watch" },
+  { label: "PACKAGES", href: "/#packages" },
   { label: "ORIGINALS" },
   { label: "FIELD NOTES" },
   { label: "FOOTNOTES" },
   { label: "STORE" },
   { label: "ABOUT" },
 ];
+
+// Local originals are the user-supplied films, not copies of YouTube content.
+export const yourResponseFilms: ScribeContent[] = [
+  { ...featuredContent, episode: "SHORT 01", relatedContent: ["DC—005-02"] },
+  {
+    ...featuredContent,
+    id: "DC—005-02",
+    slug: "your-response-matthew",
+    episode: "SHORT 02",
+    watchLabel: "SHORT 02 / MATTHEW",
+    duration: "1:15",
+    thumbnail: "/media/archive/your-response-matthew.jpg",
+    heroMedia: {
+      poster: "/media/archive/your-response-matthew.jpg",
+      alt: "Matthew in conversation in Your Response?",
+    },
+    localFilm: "/media/archive/your-response-matthew.mp4",
+    featured: false,
+    relatedContent: ["DC—005-01"],
+  },
+];
+export const yourResponseSeries = {
+  title: "YOUR RESPONSE?",
+  description: featuredContent.description,
+  films: yourResponseFilms,
+};
