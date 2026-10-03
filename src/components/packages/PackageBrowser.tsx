@@ -84,7 +84,7 @@ export default function PackageBrowser() {
                         {selected.ctaLabel} <span aria-hidden="true">↗</span>
                       </a>
                       <p className="package-handoff">
-                        Continue to our contact form to tell us about your project.
+                        Build your project brief. We’ll review the scope with you.
                       </p>
                     </div>
                     <div className="package-inclusions">

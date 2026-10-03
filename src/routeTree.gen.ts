@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DepartmentsRouteImport } from './routes/departments'
 import { Route as PackagesRouteImport } from './routes/packages'
+import { Route as StartRouteImport } from './routes/start'
 import { Route as DepartmentsScribeRouteImport } from './routes/departments_.scribe'
 import { Route as DepartmentsScribeYourResponseRouteImport } from './routes/departments_.scribe_.your-response'
 
@@ -30,6 +31,11 @@ const PackagesRoute = PackagesRouteImport.update({
   path: '/packages',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StartRoute = StartRouteImport.update({
+  id: '/start',
+  path: '/start',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DepartmentsScribeRoute = DepartmentsScribeRouteImport.update({
   id: '/departments_/scribe',
   path: '/departments/scribe',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
   '/packages': typeof PackagesRoute
+  '/start': typeof StartRoute
   '/departments/scribe': typeof DepartmentsScribeRoute
   '/departments/scribe/your-response': typeof DepartmentsScribeYourResponseRoute
 }
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
   '/packages': typeof PackagesRoute
+  '/start': typeof StartRoute
   '/departments/scribe': typeof DepartmentsScribeRoute
   '/departments/scribe/your-response': typeof DepartmentsScribeYourResponseRoute
 }
@@ -61,6 +69,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
   '/packages': typeof PackagesRoute
+  '/start': typeof StartRoute
   '/departments_/scribe': typeof DepartmentsScribeRoute
   '/departments_/scribe_/your-response': typeof DepartmentsScribeYourResponseRoute
 }
@@ -70,6 +79,7 @@ export interface FileRouteTypes {
     | '/'
     | '/departments'
     | '/packages'
+    | '/start'
     | '/departments/scribe'
     | '/departments/scribe/your-response'
   fileRoutesByTo: FileRoutesByTo
@@ -77,6 +87,7 @@ export interface FileRouteTypes {
     | '/'
     | '/departments'
     | '/packages'
+    | '/start'
     | '/departments/scribe'
     | '/departments/scribe/your-response'
   id:
@@ -84,6 +95,7 @@ export interface FileRouteTypes {
     | '/'
     | '/departments'
     | '/packages'
+    | '/start'
     | '/departments_/scribe'
     | '/departments_/scribe_/your-response'
   fileRoutesById: FileRoutesById
@@ -92,6 +104,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DepartmentsRoute: typeof DepartmentsRoute
   PackagesRoute: typeof PackagesRoute
+  StartRoute: typeof StartRoute
   DepartmentsScribeRoute: typeof DepartmentsScribeRoute
   DepartmentsScribeYourResponseRoute: typeof DepartmentsScribeYourResponseRoute
 }
@@ -119,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PackagesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/start': {
+      id: '/start'
+      path: '/start'
+      fullPath: '/start'
+      preLoaderRoute: typeof StartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/departments_/scribe': {
       id: '/departments_/scribe'
       path: '/departments/scribe'
@@ -140,6 +160,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DepartmentsRoute: DepartmentsRoute,
   PackagesRoute: PackagesRoute,
+  StartRoute: StartRoute,
   DepartmentsScribeRoute: DepartmentsScribeRoute,
   DepartmentsScribeYourResponseRoute: DepartmentsScribeYourResponseRoute,
 }

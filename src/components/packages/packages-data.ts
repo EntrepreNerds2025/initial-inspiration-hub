@@ -263,8 +263,8 @@ export function packagePrice(item: ProductionPackage): string {
   if (item.priceType === "custom") return "CUSTOM QUOTE";
   return `${item.priceType === "from" ? "FROM " : ""}$${item.price?.toLocaleString("en-CA")} CAD`;
 }
-// The contact form resolves this package key through the canonical category data.
+// The Quote Builder resolves this package key through the canonical category data.
 // Selection travels in the URL, without global state or browser storage.
 export function packageInquiryHref(inquiryKey: string): string {
-  return `/?package=${encodeURIComponent(inquiryKey)}#contact`;
+  return `/start?package=${encodeURIComponent(inquiryKey)}`;
 }

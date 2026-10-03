@@ -1,0 +1,325 @@
+@font-face {
+  font-family: "Satoshi Variable";
+  src: url("../../assets/fonts/Satoshi-Variable.ttf") format("truetype");
+  font-weight: 300 900;
+  font-display: swap;
+}
+.quote {
+  background: #0a0a0a;
+  color: #d3c3a5;
+  min-height: 100svh;
+  padding: 150px clamp(20px, 5vw, 90px) 90px;
+  font-family: "Satoshi Variable", sans-serif;
+}
+.quote-progress {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #d3c3a529;
+  padding-bottom: 24px;
+  gap: 18px;
+  margin-bottom: 70px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+.quote-progress span {
+  opacity: 0.45;
+}
+.quote-progress .current {
+  opacity: 1;
+}
+.quote-progress b {
+  font-weight: 400;
+  margin-right: 10px;
+}
+.quote-body {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 40px;
+  animation: quote-enter 0.3s ease-out;
+}
+.quote-body > section {
+  min-width: 0;
+}
+.quote-meta {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  line-height: 1.7;
+}
+.quote h1 {
+  font-size: clamp(40px, 5.5vw, 88px);
+  font-weight: 700;
+  line-height: 0.99;
+  letter-spacing: -0.045em;
+  white-space: pre-line;
+  margin: 0 0 40px;
+  max-width: 1100px;
+  overflow-wrap: break-word;
+}
+.quote h1:focus {
+  outline: none;
+}
+.quote-intro {
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.5;
+  margin-bottom: 36px;
+}
+.quote-hint {
+  font-size: 15px;
+  opacity: 0.7;
+  line-height: 1.6;
+  margin: 16px 0 24px;
+  max-width: 700px;
+}
+.quote-starting {
+  border-left: 1px solid #d3c3a55c;
+  padding: 8px 0 8px 22px;
+  margin: 30px 0;
+  line-height: 1.7;
+}
+.quote-starting > span,
+.quote-starting small {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+.quote-starting p {
+  font-size: 18px;
+}
+.quote-starting small {
+  display: block;
+  opacity: 0.65;
+}
+.quote-options {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.quote-options label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-top: 1px solid #d3c3a52b;
+  padding: 22px 4px;
+  cursor: pointer;
+  font-size: clamp(17px, 2vw, 28px);
+  line-height: 1.25;
+  min-height: 68px;
+}
+.quote-options label:last-child {
+  border-bottom: 1px solid #d3c3a52b;
+}
+.quote-options label > span:first-of-type {
+  flex: 1;
+}
+.quote-options input {
+  accent-color: #d3c3a5;
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+.quote-options label:has(input:checked) {
+  background: #d3c3a50b;
+  border-color: #d3c3a5;
+}
+.quote-options small {
+  display: block;
+  font-size: 14px;
+  opacity: 0.65;
+  line-height: 1.5;
+  margin-top: 10px;
+  max-width: 640px;
+}
+.quote input:not([type="radio"]):not([type="checkbox"]),
+.quote textarea,
+.quote select {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  border: 0;
+  border-bottom: 1px solid #d3c3a570;
+  background: #111;
+  color: #d3c3a5;
+  padding: 18px 12px;
+  font: inherit;
+  font-size: 18px;
+  border-radius: 0;
+  min-height: 54px;
+  color-scheme: dark;
+}
+.quote textarea {
+  resize: vertical;
+}
+.quote :is(input, textarea, select, button, a):focus-visible {
+  outline: 2px solid #d3c3a5;
+  outline-offset: 5px;
+}
+.quote-contact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+.quote-contact label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  line-height: 2;
+}
+.quote-contact input,
+.quote-contact select {
+  margin-top: 8px;
+}
+.quote-actions {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 48px;
+  flex-wrap: wrap;
+}
+.quote button {
+  cursor: pointer;
+}
+.quote button:disabled {
+  cursor: wait;
+  opacity: 0.5;
+}
+.quote-action {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid currentColor;
+  padding: 18px 0;
+  display: inline-block;
+  min-height: 48px;
+}
+.quote-text-button,
+.quote-review button {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  min-height: 44px;
+}
+.quote-simple {
+  display: block;
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 48px;
+  line-height: 1.6;
+}
+.quote-error {
+  border-left: 2px solid #d3c3a5;
+  padding: 14px 20px;
+  margin: 24px 0;
+  line-height: 1.6;
+}
+.quote-honey {
+  display: none !important;
+}
+.quote-review > section {
+  border-top: 1px solid #d3c3a53b;
+  padding: 25px 0 35px;
+}
+.quote-review header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.quote-review h2 {
+  font-size: 14px;
+  letter-spacing: 0.1em;
+}
+.quote-review dl > div {
+  margin: 20px 0;
+}
+.quote-review dt {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+  margin-bottom: 8px;
+}
+.quote-review dd {
+  font-size: 19px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+@keyframes quote-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 700px) {
+  .quote {
+    padding: 115px 20px 65px;
+  }
+  .quote-progress {
+    margin-bottom: 34px;
+    padding-bottom: 16px;
+  }
+  .quote-progress span {
+    display: none;
+  }
+  .quote-progress .current {
+    display: block;
+  }
+  .quote-body {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .quote h1 {
+    font-size: clamp(36px, 10vw, 62px);
+    margin-bottom: 28px;
+  }
+  .quote-contact {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .quote-options label {
+    padding: 20px 0;
+    gap: 12px;
+  }
+  .quote-actions {
+    margin-top: 30px;
+  }
+  .quote-starting {
+    padding-left: 16px;
+  }
+  .quote-review dd {
+    font-size: 17px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .quote-body {
+    animation: none;
+  }
+}
+/* Native controls retain keyboard semantics; the full editorial row is the target. */
+.quote-options input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.quote-options label:has(input:focus-visible) {
+  outline: 2px solid #d3c3a5;
+  outline-offset: 4px;
+}
+.quote-options label > span:last-child {
+  opacity: 0.35;
+}
+.quote-options label:has(input:checked) > span:last-child {
+  opacity: 1;
+  transform: rotate(45deg);
+}
+.quote h1 {
+  scroll-margin-top: 125px;
+}
+.quote-body {
+  scroll-margin-top: 125px;
+}
+.quote {
+  overflow-anchor: none;
+}
