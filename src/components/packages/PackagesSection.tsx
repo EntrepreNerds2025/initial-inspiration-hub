@@ -5,19 +5,12 @@ export default function PackagesSection() {
   return (
     <section className="packages-page" id="packages" aria-labelledby="packages-heading">
       <header className="packages-intro">
-        <p className="packages-meta">06 / PACKAGES / STARTING POINTS</p>
+        <p className="packages-meta">04 / THE COLLECTIVE</p>
         <h2 id="packages-heading">
-          EVERY PROJECT
+          WHAT
           <br />
-          STARTS SOMEWHERE.
+          WE DO.
         </h2>
-        <div className="packages-intro-bottom">
-          <p>
-            Choose a starting point.
-            <br />
-            We'll shape the production around the story.
-          </p>
-        </div>
       </header>
       <PackageBrowser />
       <p className="packages-disclaimer">

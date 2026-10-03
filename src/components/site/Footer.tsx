@@ -37,7 +37,7 @@ export default function Footer() {
         </div>
         <nav aria-label="Footer navigation">
           <a href="/#work">ARCHIVE</a>
-          <a href="/#capabilities-heading">WHAT WE DO</a>
+          <a href="/#packages">WHAT WE DO</a>
           <a href="/departments">DEPARTMENTS</a>
           <a href="/#director">ABOUT</a>
         </nav>

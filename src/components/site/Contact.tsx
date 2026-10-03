@@ -1,9 +1,22 @@
+import { useEffect, useRef } from "react";
+import { packageCategories } from "../packages/packages-data";
 import "./contact.css";
 
 const contactEmail = "hello@thedeptcollective.com";
 const fieldClass = "contact-field";
 
 export default function Contact() {
+  const serviceRef = useRef<HTMLSelectElement>(null);
+  useEffect(() => {
+    const packageKey = new URLSearchParams(window.location.search).get("package");
+    const category = packageCategories.find((item) =>
+      item.tiers.some((tier) => tier.inquiryKey === packageKey),
+    );
+    // Prefill once on arrival via a package CTA; subsequent manual choices remain intact.
+    if (category && serviceRef.current && !serviceRef.current.value) {
+      serviceRef.current.value = category.inquiryLabel;
+    }
+  }, []);
   return (
     <section id="contact" className="dept-contact" aria-labelledby="contact-inquiry-heading">
       <div className="contact-inquiry" aria-labelledby="contact-inquiry-heading">
@@ -75,6 +88,7 @@ export default function Contact() {
                 What are you interested in? <span className="text-accent">*</span>
               </label>
               <select
+                ref={serviceRef}
                 id="contact-service"
                 name="service"
                 required
@@ -82,14 +96,14 @@ export default function Contact() {
                 className={fieldClass}
               >
                 <option value="" disabled>
-                  Select a service
+                  SELECT ONE
                 </option>
-                <option>Commercial &amp; brand films</option>
-                <option>Creative direction</option>
-                <option>Film production</option>
-                <option>Editing &amp; post-production</option>
-                <option>Collaboration</option>
-                <option>Something else</option>
+                {packageCategories.map((category) => (
+                  <option key={category.id} value={category.inquiryLabel}>
+                    {category.inquiryLabel}
+                  </option>
+                ))}
+                <option value="Not Sure Yet">Not Sure Yet</option>
               </select>
             </div>
             <div className="sm:col-span-2">

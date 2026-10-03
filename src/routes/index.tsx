@@ -5,7 +5,6 @@ import Navbar from "@/components/site/Navbar";
 import Hero from "@/components/site/Hero";
 import Manifesto from "@/components/site/Manifesto";
 import SelectedWork from "@/components/site/SelectedWork";
-import Capabilities from "@/components/site/Capabilities";
 import Director from "@/components/site/Director";
 import PackagesSection from "@/components/packages/PackagesSection";
 import Contact from "@/components/site/Contact";
@@ -64,9 +63,8 @@ function Index() {
         <Hero />
         <Manifesto />
         <SelectedWork />
-        <Capabilities />
-        <Director />
         <PackagesSection />
+        <Director />
         <Contact />
       </main>
       <Footer />

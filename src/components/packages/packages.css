@@ -66,7 +66,7 @@
 .package-entry:last-child {
   border-bottom: 1px solid #d3c3a536;
 }
-.package-entry h2 {
+.package-entry h3 {
   margin: 0;
 }
 .package-row {
@@ -147,7 +147,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 9%;
 }
-.package-summary h3 {
+.package-summary h4 {
   font-size: clamp(25px, 3vw, 42px);
   line-height: 1.08;
   letter-spacing: -0.035em;
@@ -306,4 +306,18 @@
   html:has(#packages:target) {
     scroll-behavior: auto;
   }
+}
+
+.package-service-intro {
+  max-width: 760px;
+  margin-bottom: 40px;
+}
+.package-service-intro .package-description {
+  max-width: none;
+  margin-top: 0;
+  font-size: clamp(16px, 1.5vw, 20px);
+}
+.package-service-intro .packages-meta {
+  opacity: 0.75;
+  margin: 20px 0 0;
 }

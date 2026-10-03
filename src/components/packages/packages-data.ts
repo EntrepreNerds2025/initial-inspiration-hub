@@ -14,13 +14,20 @@ export interface PackageCategory {
   id: string;
   number: string;
   name: string;
+  inquiryLabel: string;
+  metadata: string;
+  description: string;
   tiers: ProductionPackage[];
 }
 export const packageCategories: PackageCategory[] = [
   {
     id: "story",
     number: "01",
-    name: "THE STORY",
+    name: "STORIES & FILMS",
+    inquiryLabel: "Stories & Films",
+    metadata: "DOCUMENTARY / PROFILES / BRANDED FILMS / ORIGINALS",
+    description:
+      "Human-led films built around real people, experiences and ideas. From profiles and mini-documentaries to branded stories and original films, we find the moments that make the story worth watching.",
     tiers: [
       {
         inquiryKey: "story",
@@ -51,7 +58,11 @@ export const packageCategories: PackageCategory[] = [
   {
     id: "event",
     number: "02",
-    name: "THE EVENT",
+    name: "EVENTS",
+    inquiryLabel: "Events",
+    metadata: "CELEBRATIONS / LAUNCHES / PERFORMANCES / EXPERIENCES",
+    description:
+      "Story-driven event coverage designed to capture both what happened and what it felt like.",
     tiers: [
       {
         inquiryKey: "event-essential",
@@ -92,7 +103,7 @@ export const packageCategories: PackageCategory[] = [
       },
       {
         inquiryKey: "event-full",
-        name: "FULL EVENT / CUSTOM",
+        name: "FULL EVENT",
         priceType: "custom",
         description: "Longer or more complex events requiring additional production.",
         includesLabel: "POSSIBLE NEEDS",
@@ -113,6 +124,10 @@ export const packageCategories: PackageCategory[] = [
     id: "live",
     number: "03",
     name: "LIVE PRODUCTION",
+    inquiryLabel: "Live Production",
+    metadata: "CONFERENCES / PANELS / PERFORMANCES / MULTI-CAMERA",
+    description:
+      "Professional video capture for conferences, conversations, performances and live experiences that need more than a highlight film.",
     tiers: [
       {
         inquiryKey: "live-single-camera",
@@ -154,7 +169,7 @@ export const packageCategories: PackageCategory[] = [
       },
       {
         inquiryKey: "live-full-production",
-        name: "LIVE PRODUCTION",
+        name: "FULL LIVE PRODUCTION",
         price: 1500,
         priceType: "from",
         description:
@@ -183,7 +198,11 @@ export const packageCategories: PackageCategory[] = [
   {
     id: "content-day",
     number: "04",
-    name: "CONTENT DAY",
+    name: "CONTENT",
+    inquiryLabel: "Content Production",
+    metadata: "BRANDS / ORGANIZATIONS / CREATORS / SOCIAL",
+    description:
+      "One intentional production session designed to create multiple pieces of content for the people and platforms you're trying to reach.",
     tiers: [
       {
         inquiryKey: "content-day",
@@ -211,11 +230,15 @@ export const packageCategories: PackageCategory[] = [
   {
     id: "custom",
     number: "05",
-    name: "CUSTOM PRODUCTION",
+    name: "SOMETHING ELSE?",
+    inquiryLabel: "Custom Production / Something Else",
+    metadata: "CAMPAIGNS / CINEMATOGRAPHY / PRODUCTION SUPPORT / MULTI-DAY",
+    description:
+      "Not every project fits inside a package. For campaigns, cinematography, production support, multi-day shoots and ideas that need something different, we'll build the production around the project.",
     tiers: [
       {
         inquiryKey: "custom-production",
-        name: "SOMETHING BIGGER?",
+        name: "CUSTOM PRODUCTION",
         priceType: "custom",
         tagline: "BUILT AROUND THE PROJECT.",
         description: "Some projects don't fit inside a package.",
@@ -240,8 +263,8 @@ export function packagePrice(item: ProductionPackage): string {
   if (item.priceType === "custom") return "CUSTOM QUOTE";
   return `${item.priceType === "from" ? "FROM " : ""}$${item.price?.toLocaleString("en-CA")} CAD`;
 }
-// One handoff contract for the future Quote Builder. The existing contact form
-// does not consume this query yet; the selection travels in the URL, not storage.
+// The contact form resolves this package key through the canonical category data.
+// Selection travels in the URL, without global state or browser storage.
 export function packageInquiryHref(inquiryKey: string): string {
   return `/?package=${encodeURIComponent(inquiryKey)}#contact`;
 }

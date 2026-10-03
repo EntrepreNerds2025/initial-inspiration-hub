@@ -5,7 +5,7 @@ export default function PackageBrowser() {
   const [opened, setOpened] = useState<string | null>(null);
   const [selections, setSelections] = useState<Record<string, string>>({});
   return (
-    <div className="package-browser" id="explore-packages">
+    <div className="package-browser">
       {packageCategories.map((category) => {
         const expanded = opened === category.id;
         const selected =
@@ -16,7 +16,7 @@ export default function PackageBrowser() {
         const startingPrice = category.tiers[0]!.price;
         return (
           <section key={category.id} className={`package-entry ${expanded ? "package-open" : ""}`}>
-            <h2>
+            <h3>
               <button
                 id={controlId}
                 className="package-row"
@@ -33,7 +33,7 @@ export default function PackageBrowser() {
                   ↗
                 </span>
               </button>
-            </h2>
+            </h3>
             <div
               id={panelId}
               role="region"
@@ -44,6 +44,10 @@ export default function PackageBrowser() {
             >
               <div className="package-panel-clip">
                 <div className="package-dossier">
+                  <div className="package-service-intro">
+                    <p className="package-description">{category.description}</p>
+                    <p className="packages-meta">{category.metadata}</p>
+                  </div>
                   {category.tiers.length > 1 && (
                     <div
                       className="package-tiers"
@@ -72,7 +76,7 @@ export default function PackageBrowser() {
                   <div className="package-detail-grid">
                     <div className="package-summary">
                       <p className="packages-meta">YOUR STARTING POINT</p>
-                      <h3>{selected.name}</h3>
+                      <h4>{selected.name}</h4>
                       <p className="package-price">{packagePrice(selected)}</p>
                       {selected.tagline && <p className="package-tagline">{selected.tagline}</p>}
                       <p className="package-description">{selected.description}</p>
