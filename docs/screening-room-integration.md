@@ -75,3 +75,10 @@ Logged-in views now reuse the public site's Satoshi Variable font asset, beige D
 Before using creator notes, editorial status overrides, or feedback on finished films, apply `supabase/migrations/202610160002_creator_notes.sql` after review. It adds two optional video fields and extends feedback policies to published finished films, retaining membership/admin enforcement. Existing draft comments work before the migration; the frontend detects the new field before enabling finished-film comments. Admins should leave the new fields blank until the migration is applied. The original production-status field and its constraints are unchanged. Replies are not added because the existing feedback schema has no threaded comments.
 
 The redesign is approved for publication. This new migration has not been applied to the live project. Visual review uses isolated fixtures with an existing public-site poster; those fixtures are test-only.
+
+
+## Live setup update — 2026-10-16
+
+Applied `202610160002_creator_notes.sql` through the project SQL Editor; verified both fields, published-film feedback policies, and continued RLS/member/author checks.
+
+Deployed `screening-invite-user` to the existing project and saved `APP_ORIGIN=https://www.thedeptcollective.com`. The function verifies the caller with Auth and checks `is_admin` before accessing server-only invitation credentials. Production-origin OPTIONS returns 204; unauthenticated POST returns 401. Isolated PostgreSQL permission tests pass. No test invitations were sent. A signed-in admin end-to-end check remains pending.
