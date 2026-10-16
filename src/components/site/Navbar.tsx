@@ -7,6 +7,7 @@ const links = [
   { label: "Packages", href: "#packages" },
   { label: "The Collective", href: "#director" },
   { label: "Contact", href: "#contact" },
+  { label: "Screening Room", href: "/screening-room" },
 ];
 
 export default function Navbar({ homePage = true }: { homePage?: boolean }) {

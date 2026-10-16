@@ -12,9 +12,19 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DepartmentsRouteImport } from './routes/departments'
 import { Route as PackagesRouteImport } from './routes/packages'
+import { Route as ScreeningRoomRouteImport } from './routes/screening-room'
 import { Route as StartRouteImport } from './routes/start'
 import { Route as DepartmentsScribeRouteImport } from './routes/departments_.scribe'
+import { Route as ScreeningRoomIndexRouteImport } from './routes/screening-room.index'
+import { Route as ScreeningRoomSplatRouteImport } from './routes/screening-room.$'
+import { Route as ScreeningRoomAdminRouteImport } from './routes/screening-room.admin'
+import { Route as ScreeningRoomCallbackRouteImport } from './routes/screening-room.callback'
+import { Route as ScreeningRoomDraftsRouteImport } from './routes/screening-room.drafts'
+import { Route as ScreeningRoomLoginRouteImport } from './routes/screening-room.login'
+import { Route as ScreeningRoomScreeningRouteImport } from './routes/screening-room.screening'
+import { Route as ScreeningRoomSearchRouteImport } from './routes/screening-room.search'
 import { Route as DepartmentsScribeYourResponseRouteImport } from './routes/departments_.scribe_.your-response'
+import { Route as ScreeningRoomFilmsFilmIdRouteImport } from './routes/screening-room.films.$filmId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,6 +41,11 @@ const PackagesRoute = PackagesRouteImport.update({
   path: '/packages',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScreeningRoomRoute = ScreeningRoomRouteImport.update({
+  id: '/screening-room',
+  path: '/screening-room',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StartRoute = StartRouteImport.update({
   id: '/start',
   path: '/start',
@@ -41,20 +56,76 @@ const DepartmentsScribeRoute = DepartmentsScribeRouteImport.update({
   path: '/departments/scribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScreeningRoomIndexRoute = ScreeningRoomIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ScreeningRoomRoute,
+} as any)
+const ScreeningRoomSplatRoute = ScreeningRoomSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => ScreeningRoomRoute,
+} as any)
+const ScreeningRoomAdminRoute = ScreeningRoomAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => ScreeningRoomRoute,
+} as any)
+const ScreeningRoomCallbackRoute = ScreeningRoomCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => ScreeningRoomRoute,
+} as any)
+const ScreeningRoomDraftsRoute = ScreeningRoomDraftsRouteImport.update({
+  id: '/drafts',
+  path: '/drafts',
+  getParentRoute: () => ScreeningRoomRoute,
+} as any)
+const ScreeningRoomLoginRoute = ScreeningRoomLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => ScreeningRoomRoute,
+} as any)
+const ScreeningRoomScreeningRoute = ScreeningRoomScreeningRouteImport.update({
+  id: '/screening',
+  path: '/screening',
+  getParentRoute: () => ScreeningRoomRoute,
+} as any)
+const ScreeningRoomSearchRoute = ScreeningRoomSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => ScreeningRoomRoute,
+} as any)
 const DepartmentsScribeYourResponseRoute =
   DepartmentsScribeYourResponseRouteImport.update({
     id: '/departments_/scribe_/your-response',
     path: '/departments/scribe/your-response',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ScreeningRoomFilmsFilmIdRoute =
+  ScreeningRoomFilmsFilmIdRouteImport.update({
+    id: '/films/$filmId',
+    path: '/films/$filmId',
+    getParentRoute: () => ScreeningRoomRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
   '/packages': typeof PackagesRoute
+  '/screening-room': typeof ScreeningRoomRouteWithChildren
   '/start': typeof StartRoute
   '/departments/scribe': typeof DepartmentsScribeRoute
+  '/screening-room/$': typeof ScreeningRoomSplatRoute
+  '/screening-room/admin': typeof ScreeningRoomAdminRoute
+  '/screening-room/callback': typeof ScreeningRoomCallbackRoute
+  '/screening-room/drafts': typeof ScreeningRoomDraftsRoute
+  '/screening-room/login': typeof ScreeningRoomLoginRoute
+  '/screening-room/screening': typeof ScreeningRoomScreeningRoute
+  '/screening-room/search': typeof ScreeningRoomSearchRoute
+  '/screening-room/': typeof ScreeningRoomIndexRoute
   '/departments/scribe/your-response': typeof DepartmentsScribeYourResponseRoute
+  '/screening-room/films/$filmId': typeof ScreeningRoomFilmsFilmIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,16 +133,35 @@ export interface FileRoutesByTo {
   '/packages': typeof PackagesRoute
   '/start': typeof StartRoute
   '/departments/scribe': typeof DepartmentsScribeRoute
+  '/screening-room/$': typeof ScreeningRoomSplatRoute
+  '/screening-room/admin': typeof ScreeningRoomAdminRoute
+  '/screening-room/callback': typeof ScreeningRoomCallbackRoute
+  '/screening-room/drafts': typeof ScreeningRoomDraftsRoute
+  '/screening-room/login': typeof ScreeningRoomLoginRoute
+  '/screening-room/screening': typeof ScreeningRoomScreeningRoute
+  '/screening-room/search': typeof ScreeningRoomSearchRoute
+  '/screening-room': typeof ScreeningRoomIndexRoute
   '/departments/scribe/your-response': typeof DepartmentsScribeYourResponseRoute
+  '/screening-room/films/$filmId': typeof ScreeningRoomFilmsFilmIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
   '/packages': typeof PackagesRoute
+  '/screening-room': typeof ScreeningRoomRouteWithChildren
   '/start': typeof StartRoute
   '/departments_/scribe': typeof DepartmentsScribeRoute
+  '/screening-room/$': typeof ScreeningRoomSplatRoute
+  '/screening-room/admin': typeof ScreeningRoomAdminRoute
+  '/screening-room/callback': typeof ScreeningRoomCallbackRoute
+  '/screening-room/drafts': typeof ScreeningRoomDraftsRoute
+  '/screening-room/login': typeof ScreeningRoomLoginRoute
+  '/screening-room/screening': typeof ScreeningRoomScreeningRoute
+  '/screening-room/search': typeof ScreeningRoomSearchRoute
+  '/screening-room/': typeof ScreeningRoomIndexRoute
   '/departments_/scribe_/your-response': typeof DepartmentsScribeYourResponseRoute
+  '/screening-room/films/$filmId': typeof ScreeningRoomFilmsFilmIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -79,9 +169,19 @@ export interface FileRouteTypes {
     | '/'
     | '/departments'
     | '/packages'
+    | '/screening-room'
     | '/start'
     | '/departments/scribe'
+    | '/screening-room/$'
+    | '/screening-room/admin'
+    | '/screening-room/callback'
+    | '/screening-room/drafts'
+    | '/screening-room/login'
+    | '/screening-room/screening'
+    | '/screening-room/search'
+    | '/screening-room/'
     | '/departments/scribe/your-response'
+    | '/screening-room/films/$filmId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,21 +189,41 @@ export interface FileRouteTypes {
     | '/packages'
     | '/start'
     | '/departments/scribe'
+    | '/screening-room/$'
+    | '/screening-room/admin'
+    | '/screening-room/callback'
+    | '/screening-room/drafts'
+    | '/screening-room/login'
+    | '/screening-room/screening'
+    | '/screening-room/search'
+    | '/screening-room'
     | '/departments/scribe/your-response'
+    | '/screening-room/films/$filmId'
   id:
     | '__root__'
     | '/'
     | '/departments'
     | '/packages'
+    | '/screening-room'
     | '/start'
     | '/departments_/scribe'
+    | '/screening-room/$'
+    | '/screening-room/admin'
+    | '/screening-room/callback'
+    | '/screening-room/drafts'
+    | '/screening-room/login'
+    | '/screening-room/screening'
+    | '/screening-room/search'
+    | '/screening-room/'
     | '/departments_/scribe_/your-response'
+    | '/screening-room/films/$filmId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DepartmentsRoute: typeof DepartmentsRoute
   PackagesRoute: typeof PackagesRoute
+  ScreeningRoomRoute: typeof ScreeningRoomRouteWithChildren
   StartRoute: typeof StartRoute
   DepartmentsScribeRoute: typeof DepartmentsScribeRoute
   DepartmentsScribeYourResponseRoute: typeof DepartmentsScribeYourResponseRoute
@@ -132,6 +252,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PackagesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/screening-room': {
+      id: '/screening-room'
+      path: '/screening-room'
+      fullPath: '/screening-room'
+      preLoaderRoute: typeof ScreeningRoomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/start': {
       id: '/start'
       path: '/start'
@@ -146,6 +273,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DepartmentsScribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/screening-room/': {
+      id: '/screening-room/'
+      path: '/'
+      fullPath: '/screening-room/'
+      preLoaderRoute: typeof ScreeningRoomIndexRouteImport
+      parentRoute: typeof ScreeningRoomRoute
+    }
+    '/screening-room/$': {
+      id: '/screening-room/$'
+      path: '/$'
+      fullPath: '/screening-room/$'
+      preLoaderRoute: typeof ScreeningRoomSplatRouteImport
+      parentRoute: typeof ScreeningRoomRoute
+    }
+    '/screening-room/admin': {
+      id: '/screening-room/admin'
+      path: '/admin'
+      fullPath: '/screening-room/admin'
+      preLoaderRoute: typeof ScreeningRoomAdminRouteImport
+      parentRoute: typeof ScreeningRoomRoute
+    }
+    '/screening-room/callback': {
+      id: '/screening-room/callback'
+      path: '/callback'
+      fullPath: '/screening-room/callback'
+      preLoaderRoute: typeof ScreeningRoomCallbackRouteImport
+      parentRoute: typeof ScreeningRoomRoute
+    }
+    '/screening-room/drafts': {
+      id: '/screening-room/drafts'
+      path: '/drafts'
+      fullPath: '/screening-room/drafts'
+      preLoaderRoute: typeof ScreeningRoomDraftsRouteImport
+      parentRoute: typeof ScreeningRoomRoute
+    }
+    '/screening-room/login': {
+      id: '/screening-room/login'
+      path: '/login'
+      fullPath: '/screening-room/login'
+      preLoaderRoute: typeof ScreeningRoomLoginRouteImport
+      parentRoute: typeof ScreeningRoomRoute
+    }
+    '/screening-room/screening': {
+      id: '/screening-room/screening'
+      path: '/screening'
+      fullPath: '/screening-room/screening'
+      preLoaderRoute: typeof ScreeningRoomScreeningRouteImport
+      parentRoute: typeof ScreeningRoomRoute
+    }
+    '/screening-room/search': {
+      id: '/screening-room/search'
+      path: '/search'
+      fullPath: '/screening-room/search'
+      preLoaderRoute: typeof ScreeningRoomSearchRouteImport
+      parentRoute: typeof ScreeningRoomRoute
+    }
     '/departments_/scribe_/your-response': {
       id: '/departments_/scribe_/your-response'
       path: '/departments/scribe/your-response'
@@ -153,13 +336,49 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DepartmentsScribeYourResponseRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/screening-room/films/$filmId': {
+      id: '/screening-room/films/$filmId'
+      path: '/films/$filmId'
+      fullPath: '/screening-room/films/$filmId'
+      preLoaderRoute: typeof ScreeningRoomFilmsFilmIdRouteImport
+      parentRoute: typeof ScreeningRoomRoute
+    }
   }
 }
+
+interface ScreeningRoomRouteChildren {
+  ScreeningRoomSplatRoute: typeof ScreeningRoomSplatRoute
+  ScreeningRoomAdminRoute: typeof ScreeningRoomAdminRoute
+  ScreeningRoomCallbackRoute: typeof ScreeningRoomCallbackRoute
+  ScreeningRoomDraftsRoute: typeof ScreeningRoomDraftsRoute
+  ScreeningRoomLoginRoute: typeof ScreeningRoomLoginRoute
+  ScreeningRoomScreeningRoute: typeof ScreeningRoomScreeningRoute
+  ScreeningRoomSearchRoute: typeof ScreeningRoomSearchRoute
+  ScreeningRoomIndexRoute: typeof ScreeningRoomIndexRoute
+  ScreeningRoomFilmsFilmIdRoute: typeof ScreeningRoomFilmsFilmIdRoute
+}
+
+const ScreeningRoomRouteChildren: ScreeningRoomRouteChildren = {
+  ScreeningRoomSplatRoute: ScreeningRoomSplatRoute,
+  ScreeningRoomAdminRoute: ScreeningRoomAdminRoute,
+  ScreeningRoomCallbackRoute: ScreeningRoomCallbackRoute,
+  ScreeningRoomDraftsRoute: ScreeningRoomDraftsRoute,
+  ScreeningRoomLoginRoute: ScreeningRoomLoginRoute,
+  ScreeningRoomScreeningRoute: ScreeningRoomScreeningRoute,
+  ScreeningRoomSearchRoute: ScreeningRoomSearchRoute,
+  ScreeningRoomIndexRoute: ScreeningRoomIndexRoute,
+  ScreeningRoomFilmsFilmIdRoute: ScreeningRoomFilmsFilmIdRoute,
+}
+
+const ScreeningRoomRouteWithChildren = ScreeningRoomRoute._addFileChildren(
+  ScreeningRoomRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DepartmentsRoute: DepartmentsRoute,
   PackagesRoute: PackagesRoute,
+  ScreeningRoomRoute: ScreeningRoomRouteWithChildren,
   StartRoute: StartRoute,
   DepartmentsScribeRoute: DepartmentsScribeRoute,
   DepartmentsScribeYourResponseRoute: DepartmentsScribeYourResponseRoute,
