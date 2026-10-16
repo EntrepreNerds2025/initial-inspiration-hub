@@ -112,14 +112,14 @@ describe("screening access boundary", () => {
     "/screening-room/admin",
   ])("redirects guests without private queries: %s", async (path) => {
     render(<Harness initial={path} />);
-    await screen.findByRole("button", { name: "Sign in" });
+    await screen.findByRole("button", { name: "Enter the Screening Room" });
     expect(screen.getByLabelText("Current route")).toHaveTextContent("/screening-room/login?next=");
     expect(mock.queries).toEqual([]);
     expect(screen.queryByText("Private film title")).not.toBeInTheDocument();
   });
   it("restores intended film after login", async () => {
     render(<Harness initial="/screening-room/films/film-1" />);
-    await screen.findByRole("button", { name: "Sign in" });
+    await screen.findByRole("button", { name: "Enter the Screening Room" });
     member();
     await act(async () => mock.listener?.("SIGNED_IN", mock.session));
     await screen.findByRole("heading", { name: "Private film title" });
@@ -217,7 +217,7 @@ describe("screening access boundary", () => {
     await screen.findByRole("heading", { name: "Invitation required" });
     expect(screen.queryByText("Private film title")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Back to sign in" }));
-    await screen.findByRole("button", { name: "Sign in" });
+    await screen.findByRole("button", { name: "Enter the Screening Room" });
   });
   it("returns film versions and YouTube playback under the prefix", async () => {
     member();
@@ -237,8 +237,8 @@ describe("screening access boundary", () => {
     mock.reset.mockResolvedValue({ error: null });
     window.history.replaceState(null, "", "/screening-room/login?next=%2Fscreening-room%2Fdrafts");
     render(<Harness initial="/screening-room/login?next=%2Fscreening-room%2Fdrafts" />);
-    fireEvent.click(await screen.findByRole("button", { name: "Forgot your password?" }));
-    fireEvent.change(screen.getByLabelText("Email address"), {
+    fireEvent.click(await screen.findByRole("button", { name: "Forgot password?" }));
+    fireEvent.change(screen.getByLabelText("Email"), {
       target: { value: "invited@example.com" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Send reset link" }));

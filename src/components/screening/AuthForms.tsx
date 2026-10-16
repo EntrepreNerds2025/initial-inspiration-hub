@@ -1,8 +1,59 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowUpRight, LockKeyhole } from "lucide-react";
 import { configured, supabase } from "@/lib/screening/supabase";
 import { screeningCallback, SCREENING_BASE } from "@/lib/screening/paths";
 import { Brand } from "./App";
+import deptLogo from "@/assets/dept-logo-beige.png";
+import "./entrance.css";
+import { heroVideo } from "@/components/site/hero-media";
+
+function EntranceVideo() {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    if (!window.matchMedia || !("IntersectionObserver" in window)) return;
+    const video = ref.current!;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let visible = true;
+    const update = () => {
+      if (reduced.matches || document.hidden || !visible) {
+        video.pause();
+        return;
+      }
+      if (!video.getAttribute("src")) video.src = heroVideo;
+      void video.play().catch(() => {
+        /* Keep the poster if autoplay is unavailable. */
+      });
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry?.isIntersecting ?? false;
+      update();
+    });
+    observer.observe(video);
+    reduced.addEventListener("change", update);
+    document.addEventListener("visibilitychange", update);
+    update();
+    return () => {
+      observer.disconnect();
+      reduced.removeEventListener("change", update);
+      document.removeEventListener("visibilitychange", update);
+      video.pause();
+    };
+  }, []);
+  return (
+    <video
+      ref={ref}
+      className="entrance-video"
+      muted
+      loop
+      playsInline
+      autoPlay
+      preload="none"
+      poster="/media/dept-hero-poster.jpg"
+      aria-hidden="true"
+    />
+  );
+}
+
 export function Login({ error, setError }: { error: string; setError: (s: string) => void }) {
   const [busy, setBusy] = useState(false),
     [reset, setReset] = useState(false),
@@ -38,49 +89,51 @@ export function Login({ error, setError }: { error: string; setError: (s: string
         if (err) throw err;
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to sign in. Please try again.");
+      setError(
+        reset
+          ? "We couldn’t send the reset link. Please try again in a moment."
+          : err instanceof Error && /invalid login credentials/i.test(err.message)
+            ? "That email or password doesn’t look right. Try again."
+            : "We couldn’t open the room. Please try again in a moment.",
+      );
     } finally {
       setBusy(false);
     }
   }
   return (
-    <main className="login">
+    <main className="login cinema-entrance">
       <div className="login-art">
-        <div className="film-grain" />
-        <Brand />
+        <EntranceVideo />
+        <div className="film-grain" aria-hidden="true" />
+        <a href="/" className="cinema-brand" aria-label="Dept. Collective home">
+          <img src={deptLogo} width="42" height="32" alt="" />
+          <span>
+            the dept collective<small>SCREENING ROOM</small>
+          </span>
+        </a>
         <div className="login-story">
-          <span className="eyebrow">FOR A SELECT AUDIENCE. FOR YOU.</span>
-          <h1>
-            Some stories
-            <br />
-            belong closer
-            <br />
-            to home.
-          </h1>
+          <span className="eyebrow">PRIVATE SCREENING / EST. 2026</span>
           <p>
-            A private collection of films, works in progress,
+            Your seat
             <br />
-            and moments worth keeping.
+            is waiting.
           </p>
-          <span className="login-edition">THE PRIVATE COLLECTION &nbsp; / &nbsp; EST. 2026</span>
+          <span className="login-edition">Private screenings. Early cuts. Behind the scenes.</span>
         </div>
       </div>
-      <section className="login-form">
-        <a href="/" className="text-button">
-          ← Dept. Collective
-        </a>
-        <span className="eyebrow">
-          <LockKeyhole size={13} /> INVITATION ONLY
-        </span>
-        <h2>{reset ? "Back to your stories." : "Welcome to the room."}</h2>
+      <section className="login-form" aria-labelledby="entrance-title">
+        <span className="eyebrow">THE DEPT COLLECTIVE</span>
+        <h1 id="entrance-title">
+          {reset ? "Back to your stories." : "Welcome to the Screening Room"}
+        </h1>
         <p className="muted">
           {reset
             ? "We’ll email you a link to reset your password."
-            : "Good films. Familiar faces. A seat saved for you."}
+            : "A private space for friends, family, collaborators, and the people who get to see it first."}
         </p>
         <form onSubmit={submit}>
           <label>
-            Email address
+            Email
             <input
               name="email"
               type="email"
@@ -112,19 +165,26 @@ export function Login({ error, setError }: { error: string; setError: (s: string
             </p>
           )}
           <button className="primary full" disabled={busy || !configured}>
-            {busy ? "Please wait…" : reset ? "Send reset link" : "Sign in"}
+            {busy
+              ? reset
+                ? "Sending your link…"
+                : "Opening the doors…"
+              : reset
+                ? "Send reset link"
+                : "Enter the Screening Room"}
             <ArrowUpRight size={17} />
           </button>
           <button
             className="text-button"
             type="button"
+            disabled={busy}
             onClick={() => {
               setReset(!reset);
               setError("");
               setMessage("");
             }}
           >
-            {reset ? "Back to sign in" : "Forgot your password?"}
+            {reset ? "Back to sign in" : "Forgot password?"}
           </button>
         </form>
         {!configured && (
@@ -133,13 +193,13 @@ export function Login({ error, setError }: { error: string; setError: (s: string
           </p>
         )}
         <div className="login-note">
-          <span className="tiny-line" />
-          <p>
-            This is a private screening space.
-            <br />
-            Access is by personal invitation from your host.
-          </p>
+          <LockKeyhole size={13} aria-hidden="true" />
+          <p>The Dept Collective Screening Room is private and invitation-only.</p>
         </div>
+        <footer className="entrance-footer">
+          <span>The Dept Collective © {new Date().getFullYear()}</span>
+          <span>Private Screening Room</span>
+        </footer>
       </section>
     </main>
   );
