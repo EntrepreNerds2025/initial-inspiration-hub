@@ -1,15 +1,6 @@
 import { useEffect, useState, useRef, useCallback, type FormEvent } from "react";
 import { SCREENING_BASE, screeningPage } from "@/lib/screening/paths";
-import {
-  ArrowLeft,
-  ArrowUpRight,
-  Film as FilmIcon,
-  LockKeyhole,
-  LogOut,
-  Search,
-  Play,
-  X,
-} from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Film as FilmIcon, LogOut, Search, Play, X } from "lucide-react";
 import { APP_NAME, configured, supabase } from "@/lib/screening/supabase";
 import {
   type Film,
@@ -23,6 +14,9 @@ import {
   formatTime,
   safeImage,
 } from "@/lib/screening/films";
+import deptLogo from "@/assets/dept-logo-beige.png";
+import { firstName, statusLabel, isBehindScenes, featuredFilm } from "@/lib/screening/presentation";
+import { useMyList } from "./useMyList";
 import { Admin } from "./Admin";
 export function ScreeningLibrary({
   profile,
@@ -35,6 +29,7 @@ export function ScreeningLibrary({
   go: (path: string) => void;
   logout: () => Promise<void>;
 }) {
+  const myList = useMyList(profile.id);
   const [error, setError] = useState("");
   const [films, setFilms] = useState<Film[]>([]),
     [categories, setCategories] = useState<Category[]>([]),
@@ -103,36 +98,36 @@ export function ScreeningLibrary({
       .toLowerCase()
       .includes(query.toLowerCase()),
   );
-  const featured =
-    visible.find((f) => f.is_featured) || visible.find((f) => !f.is_draft) || visible[0];
+  const featured = featuredFilm(visible);
   return (
     <div className="screening-app">
       <header className="navigation">
         <a
-          className="brand"
+          className="cinema-brand"
           href={SCREENING_BASE}
           onClick={(e) => {
             e.preventDefault();
             navigate("home");
           }}
         >
-          <span className="brand-mark">
-            S<span>R</span>
+          <img src={deptLogo} width="48" height="34" alt="" />
+          <span>
+            the dept collective<small>SCREENING ROOM</small>
           </span>
-          <span>{APP_NAME}</span>
         </a>
-        <nav aria-label="Main navigation">
+        <nav aria-label="Screening navigation">
           {(
             [
-              ["home", "Home"],
-              ["screening", "Screening room"],
-              ["drafts", "Draft room"],
+              ["home", "Screening Room"],
+              ["my-list", "My List"],
+              ["collections", "Collections"],
             ] as const
           ).map(([key, label]) => (
             <button
-              className={page === key && !selected ? "active" : ""}
-              onClick={() => navigate(key)}
               key={key}
+              className={page === key ? "active" : ""}
+              aria-current={page === key ? "page" : undefined}
+              onClick={() => navigate(key)}
             >
               {label}
             </button>
@@ -142,22 +137,29 @@ export function ScreeningLibrary({
           <button aria-label="Search films" onClick={() => navigate("search")}>
             <Search size={18} />
           </button>
-          {admin && (
-            <button onClick={() => navigate("admin")} className={page === "admin" ? "active" : ""}>
-              Admin
-            </button>
-          )}
-          <button
-            className="profile"
-            title={`${profile.email} · Sign out`}
-            aria-label="Sign out"
-            onClick={logout}
-          >
-            {profile.display_name.slice(0, 1).toUpperCase()}
-            <LogOut size={13} />
-          </button>
+          <details className="account-menu">
+            <summary>
+              <span className="avatar">
+                {firstName(profile.display_name).slice(0, 1).toUpperCase()}
+              </span>
+              <span>{firstName(profile.display_name)}</span>
+              <span aria-hidden="true">⌄</span>
+            </summary>
+            <div>
+              {admin && <button onClick={() => navigate("admin")}>Admin</button>}
+              <a href="/">Public studio ↗</a>
+              <button onClick={logout}>
+                <LogOut size={14} /> Sign out
+              </button>
+            </div>
+          </details>
         </div>
       </header>
+      {myList.error && (
+        <p role="status" className="notice">
+          {myList.error}
+        </p>
+      )}
       {error && (
         <div className="notice" role="alert">
           {error}
@@ -180,7 +182,7 @@ export function ScreeningLibrary({
         />
       ) : page === "missing" || (page === "film" && !selected) ? (
         <Empty
-          title="Film or page unavailable"
+          title="This screening has apparently been cancelled."
           text="This page may not exist or may not be shared with your account."
         />
       ) : page === "admin" && admin ? (
@@ -193,6 +195,8 @@ export function ScreeningLibrary({
         />
       ) : selected ? (
         <Detail
+          saved={myList.ids.includes(selected.id)}
+          toggleList={() => myList.toggle(selected.id)}
           film={selected}
           films={visible}
           categories={categories}
@@ -207,111 +211,119 @@ export function ScreeningLibrary({
         />
       ) : (
         <>
+          {page === "home" && (
+            <div className="cinema-greeting">
+              <span>Welcome back, {firstName(profile.display_name)}.</span>
+              <span>Grab a seat.</span>
+            </div>
+          )}
           {page === "home" && featured && (
-            <section
-              className="hero"
-              style={{
-                backgroundImage: `linear-gradient(90deg,rgba(9,10,9,.9) 0%,rgba(9,10,9,.12) 75%),linear-gradient(0deg,#0b0c0b 0%,transparent 45%),url("${safeImage(featured.backdrop_url || imageUrl(featured))}")`,
-              }}
-            >
-              <div className="hero-content">
-                <div className="eyebrow">
-                  <span className="tiny-line" /> A PRIVATE COLLECTION · FEATURED FILM
-                </div>
+            <section className="cinema-hero" aria-label="Now screening">
+              <img
+                className="cinema-hero-image"
+                src={safeImage(featured.backdrop_url || imageUrl(featured))}
+                alt=""
+                fetchPriority="high"
+              />
+              <div className="cinema-hero-copy">
+                <span className="eyebrow">NOW SCREENING</span>
                 <h1>{featured.title}</h1>
+                <p>{featured.short_description || featured.description}</p>
                 <div className="metadata">
                   <span>{featured.year}</span>
                   <span>{featured.runtime} min</span>
-                  <span>
-                    {categories.find((c) => c.id === featured.category_id)?.name ||
-                      featured.content_type.replace("_", " ")}
-                  </span>
-                  {featured.is_draft && (
-                    <span className="badge">{featured.status.replace("_", " ")}</span>
-                  )}
+                  <span>{statusLabel(featured)}</span>
                 </div>
-                <p>{featured.short_description}</p>
                 <div className="button-row">
                   <button className="primary" onClick={() => open(featured, true)}>
-                    <Play size={15} fill="currentColor" /> Watch now
+                    <Play size={16} fill="currentColor" /> Watch
                   </button>
-                  <button className="secondary" onClick={() => open(featured)}>
-                    Explore film <ArrowUpRight size={16} />
+                  <button
+                    className="secondary"
+                    aria-pressed={myList.ids.includes(featured.id)}
+                    onClick={() => myList.toggle(featured.id)}
+                  >
+                    {myList.ids.includes(featured.id) ? "✓ My List" : "+ My List"}
+                  </button>
+                  <button className="cinema-info" onClick={() => open(featured)}>
+                    More info ↗
                   </button>
                 </div>
-                <div className="hero-caption">
-                  IN GOOD COMPANY.
-                  <br />
-                  <span>Stories are better when shared.</span>
-                </div>
               </div>
-              <div className="hero-index">
-                <span>01</span> / PRIVATE SCREENING
-              </div>
+              <span className="cinema-edition">THE PRIVATE COLLECTION / 01</span>
             </section>
           )}
           <main className={page === "home" ? "library" : "library inner-page"}>
             {page === "home" ? (
               <>
-                <div className="collection-heading">
-                  <div>
-                    <span className="eyebrow">CURATED FOR OUR CIRCLE</span>
-                    <h2>A few stories worth sharing.</h2>
+                {!featured && (
+                  <div className="cinema-welcome">
+                    <span className="eyebrow">THE DEPT COLLECTIVE / AFTER HOURS</span>
+                    <h1>
+                      The Screening
+                      <br />
+                      Room.
+                    </h1>
+                    <p>
+                      {admin
+                        ? "Your private cinema is ready. Add a film in Admin to set the first screening."
+                        : "A seat saved for you. Your host is preparing the first screening."}
+                    </p>
                   </div>
-                  <span className="private-label">
-                    <LockKeyhole size={13} /> INVITATION ONLY
-                  </span>
-                </div>
+                )}
                 <Shelf
-                  title="Recently added"
-                  subtitle="The latest additions to our collection"
-                  films={visible.slice(0, 12)}
+                  title="Now Showing"
+                  subtitle="The finished stuff. Safe for public consumption. Mostly."
+                  films={visible.filter((f) => !f.is_draft && !isBehindScenes(f, categories))}
                   open={open}
+                  empty="The next screening is on its way."
                 />
                 <Shelf
-                  title="The Screening Room"
-                  subtitle="Finished films. Ready for an audience."
-                  films={visible.filter((f) => !f.is_draft)}
+                  title="In the Cutting Room"
+                  subtitle="Rough cuts, experiments, and things you probably weren't supposed to see yet."
+                  films={visible.filter((f) => f.is_draft && !isBehindScenes(f, categories))}
                   open={open}
+                  empty="The cutting room is suspiciously clean right now."
                 />
                 <Shelf
-                  title="Inside the Draft Room"
-                  subtitle="A first look. A fresh perspective. A work in progress."
-                  films={visible.filter((f) => f.is_draft)}
+                  title="Behind the Scenes"
+                  subtitle="The cameras, the chaos, and everything around the final frame."
+                  films={visible.filter((f) => isBehindScenes(f, categories))}
                   open={open}
+                  empty="A little more of the process, coming soon."
                 />
-                {categories.map((c) => (
+                {projects.map((p) => (
                   <Shelf
-                    key={c.id}
-                    title={c.name}
-                    films={visible.filter((f) => f.category_id === c.id)}
+                    key={p.id}
+                    title={p.title}
+                    subtitle={p.description}
+                    films={visible.filter((f) => f.project_id === p.id)}
                     open={open}
                   />
                 ))}
               </>
             ) : (
               <>
-                <span className="eyebrow">YOUR PRIVATE COLLECTION</span>
+                <span className="eyebrow">THE PRIVATE COLLECTION</span>
                 <h1 className="page-title">
-                  {page === "drafts"
-                    ? "The Draft Room"
-                    : page === "search"
-                      ? "Find a story."
-                      : "The Screening Room"}
+                  {page === "my-list"
+                    ? "My List"
+                    : page === "collections"
+                      ? "Collections"
+                      : page === "drafts"
+                        ? "In the Cutting Room"
+                        : page === "search"
+                          ? "Find a story."
+                          : "Now Showing"}
                 </h1>
-                <p className="muted">
-                  {page === "drafts"
-                    ? "Unfinished stories, shared with a trusted few. Your perspective is part of the process."
-                    : page === "screening"
-                      ? "The finished collection. Settle in and stay a while."
-                      : "Search films, projects, categories, and descriptions."}
-                </p>
+                {page === "my-list" && <p className="muted">Saved for later, on this device.</p>}
                 {page === "search" && (
                   <label className="search-box">
                     <Search size={20} />
                     <input
+                      aria-label="Search the collection"
                       autoFocus
-                      placeholder="What are you looking for?"
+                      placeholder="Search films, projects, categories…"
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                     />
@@ -322,49 +334,78 @@ export function ScreeningLibrary({
                     )}
                   </label>
                 )}
-                <div className="film-grid">
-                  {(page === "search"
-                    ? searched
-                    : visible.filter((f) => f.is_draft === (page === "drafts"))
-                  ).map((f) => (
-                    <FilmCard film={f} open={open} key={f.id} />
-                  ))}
-                </div>
-                {(page === "search"
-                  ? searched
-                  : visible.filter((f) => f.is_draft === (page === "drafts"))
-                ).length === 0 && (
-                  <Empty
-                    title="No films here yet."
-                    text={
+                {page === "collections" ? (
+                  <>
+                    {categories.map((c) => (
+                      <Shelf
+                        key={c.id}
+                        title={c.name}
+                        films={visible.filter((f) => f.category_id === c.id)}
+                        open={open}
+                      />
+                    ))}
+                    {projects.map((p) => (
+                      <Shelf
+                        key={p.id}
+                        title={p.title}
+                        subtitle={p.description}
+                        films={visible.filter((f) => f.project_id === p.id)}
+                        open={open}
+                      />
+                    ))}
+                    {!visible.some((f) => f.category_id || f.project_id) && (
+                      <Empty
+                        title="A collection is taking shape."
+                        text="Your host will gather the films here."
+                      />
+                    )}
+                  </>
+                ) : (
+                  (() => {
+                    const items =
                       page === "search"
-                        ? "Try another title, project, or category."
-                        : "Your host will add something special soon."
-                    }
-                  />
+                        ? searched
+                        : page === "my-list"
+                          ? visible.filter((f) => myList.ids.includes(f.id))
+                          : visible.filter((f) => f.is_draft === (page === "drafts"));
+                    return (
+                      <>
+                        <div className="film-grid">
+                          {items.map((f) => (
+                            <FilmCard key={f.id} film={f} open={open} />
+                          ))}
+                        </div>
+                        {!items.length && (
+                          <Empty
+                            title={
+                              page === "my-list"
+                                ? "Nothing here yet. Your extremely prestigious watchlist awaits."
+                                : "No films here yet."
+                            }
+                            text={
+                              page === "search"
+                                ? "Try another title, project, or category."
+                                : "Pick a screening when you’re ready."
+                            }
+                          />
+                        )}
+                      </>
+                    );
+                  })()
                 )}
               </>
-            )}
-            {visible.length === 0 && page === "home" && (
-              <Empty
-                title="The room is ready."
-                text={
-                  admin
-                    ? "Add your first film in Admin to begin your collection."
-                    : "Your host is preparing the first screening."
-                }
-              />
             )}
           </main>
         </>
       )}
-      <footer>
-        <a href="/">← Dept. Collective</a>
-        <Brand />
-        <p>A private space for the stories that matter.</p>
-        <span>
-          <LockKeyhole size={12} /> FOR FRIENDS & FAMILY
-        </span>
+      <footer className="cinema-footer">
+        <a href="/">
+          THE DEPT COLLECTIVE<small>Screening Room</small>
+        </a>
+        <p>Made for the people who get to see it before everybody else.</p>
+        <small>
+          Private screenings only. Please don't redistribute anything without permission.
+        </small>
       </footer>
     </div>
   );
@@ -393,7 +434,7 @@ function FilmCard({ film: f, open }: { film: Film; open: (f: Film) => void }) {
     <button className="film-card" onClick={() => open(f)}>
       <div className="film-image">
         <img loading="lazy" src={safeImage(imageUrl(f))} alt="" />
-        {f.is_draft && <span className="badge">{f.status.replace("_", " ")}</span>}
+        <span className="badge">{statusLabel(f)}</span>
         <span className="card-play">
           <Play size={18} fill="currentColor" />
         </span>
@@ -416,13 +457,15 @@ function Shelf({
   subtitle,
   films,
   open,
+  empty,
 }: {
+  empty?: string;
   title: string;
   subtitle?: string;
   films: Film[];
   open: (f: Film) => void;
 }) {
-  if (!films.length) return null;
+  if (!films.length && !empty) return null;
   return (
     <section className="shelf">
       <div className="shelf-header">
@@ -435,7 +478,12 @@ function Shelf({
         </div>
         <span className="shelf-hint">SCROLL TO EXPLORE →</span>
       </div>
-      <div className="film-row">
+      {!films.length && <p className="shelf-empty">{empty}</p>}
+      <div
+        className="film-row"
+        tabIndex={films.length ? 0 : undefined}
+        aria-label={`${title} films`}
+      >
         {films.map((f) => (
           <FilmCard film={f} open={open} key={f.id} />
         ))}
@@ -444,6 +492,8 @@ function Shelf({
   );
 }
 function Detail({
+  saved,
+  toggleList,
   film: f,
   films,
   categories,
@@ -454,6 +504,8 @@ function Detail({
   open,
   back,
 }: {
+  saved: boolean;
+  toggleList: () => void;
   film: Film;
   films: Film[];
   categories: Category[];
@@ -517,9 +569,13 @@ function Detail({
             <span>{f.year}</span>
             <span>{f.runtime} min</span>
             <span>{categories.find((c) => c.id === f.category_id)?.name || f.content_type}</span>
-            <span className="badge">{f.status.replace("_", " ")}</span>
+            <span className="badge">{statusLabel(f)}</span>
+            <span>{f.is_published ? "INVITED VIEWERS" : "ADMIN ONLY"}</span>
           </div>
           <p className="description">{f.description}</p>
+          <button className="secondary" aria-pressed={saved} onClick={toggleList}>
+            {saved ? "✓ My List" : "+ My List"}
+          </button>
           {!playing && (
             <button className="primary" onClick={() => setPlaying(true)}>
               <Play size={15} fill="currentColor" /> Play film
@@ -544,6 +600,12 @@ function Detail({
           </dl>
         </aside>
       </div>
+      {f.creator_note && (
+        <section className="creator-note">
+          <span className="eyebrow">A NOTE FROM RIANN</span>
+          <p>{f.creator_note}</p>
+        </section>
+      )}
       {versions.length > 1 && (
         <section className="versions">
           <span className="eyebrow">PROJECT VERSIONS</span>
@@ -562,9 +624,34 @@ function Detail({
           </div>
         </section>
       )}
-      {f.is_draft && playing && (
-        <Comments key={f.id} film={f} profile={profile} seek={(s) => setStart(s)} />
+      {(f.is_draft || f.creator_note !== undefined) && (
+        <Comments
+          key={f.id}
+          film={f}
+          profile={profile}
+          seek={(s) => {
+            setStart(s);
+            setPlaying(true);
+          }}
+        />
       )}
+      <Shelf
+        title="More From This Series"
+        films={versions.filter((v) => v.id !== f.id)}
+        open={open}
+      />
+      <Shelf
+        title="More Like This"
+        films={films
+          .filter(
+            (v) =>
+              v.id !== f.id &&
+              (!f.project_id || v.project_id !== f.project_id) &&
+              (f.category_id ? v.category_id === f.category_id : v.content_type === f.content_type),
+          )
+          .slice(0, 10)}
+        open={open}
+      />
       <p className="provider-note">
         Playback provided by YouTube. Unlisted links may be shared by anyone who has them.
       </p>
@@ -625,7 +712,7 @@ function Comments({
   return (
     <section className="comments">
       <span className="eyebrow">A CONVERSATION IN THE MAKING</span>
-      <h2>Your perspective matters.</h2>
+      <h2>Leave a note for Riann.</h2>
       <p className="muted">
         A thought, a detail, a moment that stayed with you. Leave a note for the creator.
       </p>
@@ -638,7 +725,7 @@ function Comments({
           name="comment"
           required
           maxLength={4000}
-          placeholder="What did you think?"
+          placeholder="Share your thoughts, feedback, or just hype it up..."
         />
         <div className="comment-actions">
           <label>
@@ -666,7 +753,10 @@ function Comments({
       {comments.map((c) => (
         <article className="comment" key={c.id}>
           <div>
-            <strong>{c.author_name}</strong>
+            <span className="avatar" aria-hidden="true">
+              {firstName(c.author_name).slice(0, 1).toUpperCase()}
+            </span>
+            <strong>{firstName(c.author_name)}</strong>
             <time>{new Date(c.created_at).toLocaleString()}</time>
             {(profile.role === "admin" || c.user_id === profile.id) && (
               <button

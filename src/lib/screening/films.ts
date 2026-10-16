@@ -31,6 +31,8 @@ export type Film = {
   is_draft: boolean;
   is_published: boolean;
   creator: string;
+  creator_note?: string;
+  display_status?: string;
   created_at: string;
   updated_at: string;
 };

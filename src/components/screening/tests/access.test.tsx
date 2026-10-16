@@ -148,10 +148,70 @@ describe("screening access boundary", () => {
     fireEvent.click(screen.getByRole("button", { name: "feedback" }));
     await screen.findByRole("heading", { name: "Draft feedback" });
   });
+  it("saves a film to My List and allows removing it", async () => {
+    localStorage.clear();
+    member();
+    render(<Harness />);
+    fireEvent.click(await screen.findByRole("button", { name: "+ My List" }));
+    fireEvent.click(screen.getByRole("button", { name: "My List" }));
+    await screen.findByRole("heading", { name: "My List" });
+    expect(screen.getByRole("heading", { name: "Private film title" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Screening Room" }));
+    fireEvent.click(await screen.findByRole("button", { name: "✓ My List" }));
+    fireEvent.click(screen.getByRole("button", { name: "My List" }));
+    await screen.findByText("Nothing here yet. Your extremely prestigious watchlist awaits.");
+  });
+  it("renders the private cinema with fixture content for isolated visual review", async () => {
+    member();
+    mock.films = [
+      {
+        ...film,
+        title: "A closer look.",
+        thumbnail_url: "https://www.thedeptcollective.com/media/dept-hero-poster.jpg",
+        backdrop_url: "https://www.thedeptcollective.com/media/dept-hero-poster.jpg",
+      },
+      ...Array.from({ length: 5 }, (_, i) => ({
+        ...film,
+        id: "final-" + i,
+        title: "Screening study " + (i + 1),
+        is_featured: false,
+        is_draft: false,
+        status: "final",
+        thumbnail_url: "https://www.thedeptcollective.com/media/dept-hero-poster.jpg",
+      })),
+    ];
+    render(<Harness />);
+    await screen.findByRole("button", { name: "Watch" });
+    if (process.env["CINEMA_PREVIEW"]) {
+      const fs = await import("node:fs/promises");
+      const css =
+        (await fs.readFile("src/components/screening/screening.css", "utf8")) +
+        (await fs.readFile("src/components/screening/private-cinema.css", "utf8"));
+      await fs.mkdir("/tmp/dept-cinema-preview", { recursive: true });
+      await fs.copyFile(
+        "src/assets/fonts/Satoshi-Variable.ttf",
+        "/tmp/dept-cinema-preview/Satoshi-Variable.ttf",
+      );
+      await fs.copyFile(
+        "src/assets/dept-logo-beige.png",
+        "/tmp/dept-cinema-preview/dept-logo-beige.png",
+      );
+      await fs.writeFile(
+        "/tmp/dept-cinema-preview/index.html",
+        '<!doctype html><html><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>body{margin:0}' +
+          css.replace("../../assets/fonts/Satoshi-Variable.ttf", "./Satoshi-Variable.ttf") +
+          '</style><div class="screening-scope">' +
+          document
+            .querySelector(".screening-app")!
+            .outerHTML.replaceAll("/src/assets/dept-logo-beige.png", "./dept-logo-beige.png") +
+          "</div></html>",
+      );
+    }
+  });
   it("clears metadata on logout and observed revocation", async () => {
     member();
     render(<Harness />);
-    await screen.findByRole("button", { name: "Watch now" });
+    await screen.findByRole("button", { name: "Watch" });
     mock.profile = { id: "viewer-1", is_active: false };
     await act(async () => mock.listener?.("TOKEN_REFRESHED", mock.session));
     await screen.findByRole("heading", { name: "Invitation required" });
@@ -162,7 +222,7 @@ describe("screening access boundary", () => {
   it("returns film versions and YouTube playback under the prefix", async () => {
     member();
     render(<Harness />);
-    fireEvent.click(await screen.findByRole("button", { name: "Watch now" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Watch" }));
     await screen.findByTitle("Private film title");
     expect(screen.getByLabelText("Current route")).toHaveTextContent(
       "/screening-room/films/film-1",
@@ -171,7 +231,7 @@ describe("screening access boundary", () => {
       "src",
       expect.stringContaining("youtube-nocookie.com/embed/"),
     );
-    await screen.findByRole("heading", { name: "Your perspective matters." });
+    await screen.findByRole("heading", { name: "Leave a note for Riann." });
   });
   it("returns reset emails to screening callback and preserves next", async () => {
     mock.reset.mockResolvedValue({ error: null });
@@ -200,6 +260,6 @@ describe("screening access boundary", () => {
       target: { value: "a-long-test-password" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Save password & enter" }));
-    await screen.findByRole("heading", { name: "The Draft Room" });
+    await screen.findByRole("heading", { name: "In the Cutting Room" });
   });
 });

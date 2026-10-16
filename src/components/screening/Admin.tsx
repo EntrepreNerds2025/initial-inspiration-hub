@@ -525,6 +525,16 @@ function FilmEditor({
       version_number: Number(fd.get("version_number")),
       status: String(fd.get("status")),
       creator: String(fd.get("creator")),
+      ...(fd.get("display_status")
+        ? { display_status: String(fd.get("display_status")) }
+        : film?.display_status !== undefined
+          ? { display_status: "" }
+          : {}),
+      ...(fd.get("creator_note")
+        ? { creator_note: String(fd.get("creator_note")) }
+        : film?.creator_note !== undefined
+          ? { creator_note: "" }
+          : {}),
       is_draft: fd.get("is_draft") === "on",
       is_featured: fd.get("is_featured") === "on",
       is_published: fd.get("is_published") === "on",
@@ -592,6 +602,18 @@ function FilmEditor({
             <label className="span-two">
               Full description
               <textarea name="description" defaultValue={film?.description} />
+            </label>
+            <label>
+              A note from Riann
+              <textarea
+                name="creator_note"
+                maxLength={4000}
+                defaultValue={film?.creator_note || ""}
+                placeholder="What should your viewers know before they watch?"
+              />
+              <small>
+                Requires the creator-notes database migration. Leave blank until it is applied.
+              </small>
             </label>
             <label className="span-two">
               YouTube URL
@@ -707,6 +729,28 @@ function FilmEditor({
               </select>
             </label>
           </div>
+          <label>
+            Screening label (optional)
+            <select name="display_status" defaultValue={film?.display_status || ""}>
+              <option value="">Use existing production status</option>
+              {[
+                "FINAL",
+                "ROUGH CUT",
+                "WIP",
+                "FIRST CUT",
+                "IN EDIT",
+                "EXPERIMENT",
+                "UNRELEASED",
+                "ARCHIVE",
+                "NEEDS FEEDBACK",
+              ].map((label) => (
+                <option key={label}>{label}</option>
+              ))}
+            </select>
+            <small>
+              Requires the creator-notes migration; existing production status remains unchanged.
+            </small>
+          </label>
           <div className="toggles">
             {[
               ["is_draft", "Draft room"],

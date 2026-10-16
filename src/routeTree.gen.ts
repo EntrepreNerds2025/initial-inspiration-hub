@@ -19,8 +19,10 @@ import { Route as ScreeningRoomIndexRouteImport } from './routes/screening-room.
 import { Route as ScreeningRoomSplatRouteImport } from './routes/screening-room.$'
 import { Route as ScreeningRoomAdminRouteImport } from './routes/screening-room.admin'
 import { Route as ScreeningRoomCallbackRouteImport } from './routes/screening-room.callback'
+import { Route as ScreeningRoomCollectionsRouteImport } from './routes/screening-room.collections'
 import { Route as ScreeningRoomDraftsRouteImport } from './routes/screening-room.drafts'
 import { Route as ScreeningRoomLoginRouteImport } from './routes/screening-room.login'
+import { Route as ScreeningRoomMyListRouteImport } from './routes/screening-room.my-list'
 import { Route as ScreeningRoomScreeningRouteImport } from './routes/screening-room.screening'
 import { Route as ScreeningRoomSearchRouteImport } from './routes/screening-room.search'
 import { Route as DepartmentsScribeYourResponseRouteImport } from './routes/departments_.scribe_.your-response'
@@ -76,6 +78,12 @@ const ScreeningRoomCallbackRoute = ScreeningRoomCallbackRouteImport.update({
   path: '/callback',
   getParentRoute: () => ScreeningRoomRoute,
 } as any)
+const ScreeningRoomCollectionsRoute =
+  ScreeningRoomCollectionsRouteImport.update({
+    id: '/collections',
+    path: '/collections',
+    getParentRoute: () => ScreeningRoomRoute,
+  } as any)
 const ScreeningRoomDraftsRoute = ScreeningRoomDraftsRouteImport.update({
   id: '/drafts',
   path: '/drafts',
@@ -84,6 +92,11 @@ const ScreeningRoomDraftsRoute = ScreeningRoomDraftsRouteImport.update({
 const ScreeningRoomLoginRoute = ScreeningRoomLoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => ScreeningRoomRoute,
+} as any)
+const ScreeningRoomMyListRoute = ScreeningRoomMyListRouteImport.update({
+  id: '/my-list',
+  path: '/my-list',
   getParentRoute: () => ScreeningRoomRoute,
 } as any)
 const ScreeningRoomScreeningRoute = ScreeningRoomScreeningRouteImport.update({
@@ -119,8 +132,10 @@ export interface FileRoutesByFullPath {
   '/screening-room/$': typeof ScreeningRoomSplatRoute
   '/screening-room/admin': typeof ScreeningRoomAdminRoute
   '/screening-room/callback': typeof ScreeningRoomCallbackRoute
+  '/screening-room/collections': typeof ScreeningRoomCollectionsRoute
   '/screening-room/drafts': typeof ScreeningRoomDraftsRoute
   '/screening-room/login': typeof ScreeningRoomLoginRoute
+  '/screening-room/my-list': typeof ScreeningRoomMyListRoute
   '/screening-room/screening': typeof ScreeningRoomScreeningRoute
   '/screening-room/search': typeof ScreeningRoomSearchRoute
   '/screening-room/': typeof ScreeningRoomIndexRoute
@@ -136,8 +151,10 @@ export interface FileRoutesByTo {
   '/screening-room/$': typeof ScreeningRoomSplatRoute
   '/screening-room/admin': typeof ScreeningRoomAdminRoute
   '/screening-room/callback': typeof ScreeningRoomCallbackRoute
+  '/screening-room/collections': typeof ScreeningRoomCollectionsRoute
   '/screening-room/drafts': typeof ScreeningRoomDraftsRoute
   '/screening-room/login': typeof ScreeningRoomLoginRoute
+  '/screening-room/my-list': typeof ScreeningRoomMyListRoute
   '/screening-room/screening': typeof ScreeningRoomScreeningRoute
   '/screening-room/search': typeof ScreeningRoomSearchRoute
   '/screening-room': typeof ScreeningRoomIndexRoute
@@ -155,8 +172,10 @@ export interface FileRoutesById {
   '/screening-room/$': typeof ScreeningRoomSplatRoute
   '/screening-room/admin': typeof ScreeningRoomAdminRoute
   '/screening-room/callback': typeof ScreeningRoomCallbackRoute
+  '/screening-room/collections': typeof ScreeningRoomCollectionsRoute
   '/screening-room/drafts': typeof ScreeningRoomDraftsRoute
   '/screening-room/login': typeof ScreeningRoomLoginRoute
+  '/screening-room/my-list': typeof ScreeningRoomMyListRoute
   '/screening-room/screening': typeof ScreeningRoomScreeningRoute
   '/screening-room/search': typeof ScreeningRoomSearchRoute
   '/screening-room/': typeof ScreeningRoomIndexRoute
@@ -175,8 +194,10 @@ export interface FileRouteTypes {
     | '/screening-room/$'
     | '/screening-room/admin'
     | '/screening-room/callback'
+    | '/screening-room/collections'
     | '/screening-room/drafts'
     | '/screening-room/login'
+    | '/screening-room/my-list'
     | '/screening-room/screening'
     | '/screening-room/search'
     | '/screening-room/'
@@ -192,8 +213,10 @@ export interface FileRouteTypes {
     | '/screening-room/$'
     | '/screening-room/admin'
     | '/screening-room/callback'
+    | '/screening-room/collections'
     | '/screening-room/drafts'
     | '/screening-room/login'
+    | '/screening-room/my-list'
     | '/screening-room/screening'
     | '/screening-room/search'
     | '/screening-room'
@@ -210,8 +233,10 @@ export interface FileRouteTypes {
     | '/screening-room/$'
     | '/screening-room/admin'
     | '/screening-room/callback'
+    | '/screening-room/collections'
     | '/screening-room/drafts'
     | '/screening-room/login'
+    | '/screening-room/my-list'
     | '/screening-room/screening'
     | '/screening-room/search'
     | '/screening-room/'
@@ -301,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScreeningRoomCallbackRouteImport
       parentRoute: typeof ScreeningRoomRoute
     }
+    '/screening-room/collections': {
+      id: '/screening-room/collections'
+      path: '/collections'
+      fullPath: '/screening-room/collections'
+      preLoaderRoute: typeof ScreeningRoomCollectionsRouteImport
+      parentRoute: typeof ScreeningRoomRoute
+    }
     '/screening-room/drafts': {
       id: '/screening-room/drafts'
       path: '/drafts'
@@ -313,6 +345,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/screening-room/login'
       preLoaderRoute: typeof ScreeningRoomLoginRouteImport
+      parentRoute: typeof ScreeningRoomRoute
+    }
+    '/screening-room/my-list': {
+      id: '/screening-room/my-list'
+      path: '/my-list'
+      fullPath: '/screening-room/my-list'
+      preLoaderRoute: typeof ScreeningRoomMyListRouteImport
       parentRoute: typeof ScreeningRoomRoute
     }
     '/screening-room/screening': {
@@ -350,8 +389,10 @@ interface ScreeningRoomRouteChildren {
   ScreeningRoomSplatRoute: typeof ScreeningRoomSplatRoute
   ScreeningRoomAdminRoute: typeof ScreeningRoomAdminRoute
   ScreeningRoomCallbackRoute: typeof ScreeningRoomCallbackRoute
+  ScreeningRoomCollectionsRoute: typeof ScreeningRoomCollectionsRoute
   ScreeningRoomDraftsRoute: typeof ScreeningRoomDraftsRoute
   ScreeningRoomLoginRoute: typeof ScreeningRoomLoginRoute
+  ScreeningRoomMyListRoute: typeof ScreeningRoomMyListRoute
   ScreeningRoomScreeningRoute: typeof ScreeningRoomScreeningRoute
   ScreeningRoomSearchRoute: typeof ScreeningRoomSearchRoute
   ScreeningRoomIndexRoute: typeof ScreeningRoomIndexRoute
@@ -362,8 +403,10 @@ const ScreeningRoomRouteChildren: ScreeningRoomRouteChildren = {
   ScreeningRoomSplatRoute: ScreeningRoomSplatRoute,
   ScreeningRoomAdminRoute: ScreeningRoomAdminRoute,
   ScreeningRoomCallbackRoute: ScreeningRoomCallbackRoute,
+  ScreeningRoomCollectionsRoute: ScreeningRoomCollectionsRoute,
   ScreeningRoomDraftsRoute: ScreeningRoomDraftsRoute,
   ScreeningRoomLoginRoute: ScreeningRoomLoginRoute,
+  ScreeningRoomMyListRoute: ScreeningRoomMyListRoute,
   ScreeningRoomScreeningRoute: ScreeningRoomScreeningRoute,
   ScreeningRoomSearchRoute: ScreeningRoomSearchRoute,
   ScreeningRoomIndexRoute: ScreeningRoomIndexRoute,

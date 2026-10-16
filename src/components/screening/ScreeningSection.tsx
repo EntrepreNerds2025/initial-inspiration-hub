@@ -7,6 +7,7 @@ import { safeScreeningNext, screeningLoginPath, SCREENING_BASE } from "@/lib/scr
 import { Brand, ScreeningLibrary } from "./App";
 import { Login, PasswordSetup } from "./AuthForms";
 import "./screening.css";
+import "./private-cinema.css";
 
 export function ScreeningSection() {
   const location = useLocation();

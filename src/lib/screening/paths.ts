@@ -24,7 +24,7 @@ export function screeningPage(path: string) {
   const suffix = path.slice(SCREENING_BASE.length).replace(/^\/+|\/+$/g, "");
   return suffix === ""
     ? "home"
-    : ["screening", "drafts", "search", "admin"].includes(suffix)
+    : ["screening", "drafts", "search", "admin", "my-list", "collections"].includes(suffix)
       ? suffix
       : suffix.startsWith("films/")
         ? "film"
