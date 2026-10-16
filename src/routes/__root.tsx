@@ -77,6 +77,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "apple-mobile-web-app-title", content: "Dept. Collective" },
+      { name: "theme-color", content: "#101010" },
       { title: "Lovable App" },
       { name: "description", content: "Lovable Generated Project" },
       { name: "author", content: "Lovable" },
@@ -91,6 +93,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
+      { rel: "apple-touch-icon", href: "/dept-home-icon.png", sizes: "256x256" },
+      { rel: "manifest", href: "/site.webmanifest" },
       { rel: "icon", href: "/favicon.ico?v=dept-2", type: "image/x-icon" },
       { rel: "icon", href: "/dept-tab-icon-16.png", type: "image/png", sizes: "16x16" },
       { rel: "icon", href: "/dept-tab-icon-32.png", type: "image/png", sizes: "32x32" },
