@@ -34,6 +34,7 @@ export function Admin({ films, projects, categories, currentUser, refresh }: Pro
     [busy, setBusy] = useState(false),
     [filter, setFilter] = useState("all"),
     [search, setSearch] = useState("");
+  const [showRemoved, setShowRemoved] = useState(false);
   const [users, setUsers] = useState<Profile[]>([]),
     [projectEdit, setProjectEdit] = useState<Project | null>(null),
     [categoryEdit, setCategoryEdit] = useState<Category | null>(null);
@@ -423,41 +424,89 @@ export function Admin({ films, projects, categories, currentUser, refresh }: Pro
             Invitations require the deployed invite-user Edge Function. Admin roles are assigned
             securely through the database.
           </p>
+          <button type="button" onClick={() => setShowRemoved(!showRemoved)}>
+            {showRemoved ? "Hide removed users" : "Show removed users"}
+          </button>
           <div className="management-list">
-            {users.map((u) => (
-              <article key={u.id}>
-                <div>
-                  <h3>{u.display_name}</h3>
-                  <p>{u.email}</p>
-                  <small>
-                    {u.role} · {u.is_active ? "Active" : "Access revoked"}
-                  </small>
-                </div>
-                {u.id !== currentUser && (
-                  <button
-                    disabled={busy}
-                    onClick={() => {
-                      if (
-                        !window.confirm(
-                          `${u.is_active ? "Revoke" : "Restore"} access for ${u.email}?`,
+            {users
+              .filter((u) => showRemoved || !u.is_archived)
+              .map((u) => (
+                <article key={u.id}>
+                  <div>
+                    <h3>{u.display_name}</h3>
+                    <p>{u.email}</p>
+                    <small>
+                      {u.role} ·{" "}
+                      {u.is_archived
+                        ? "Removed from list · Access revoked"
+                        : u.is_active
+                          ? "Active"
+                          : "Access revoked"}
+                    </small>
+                  </div>
+                  {u.id !== currentUser && (
+                    <button
+                      disabled={busy}
+                      onClick={() => {
+                        if (
+                          !window.confirm(
+                            `${u.is_active ? "Revoke" : "Restore"} access for ${u.email}?`,
+                          )
                         )
-                      )
-                        return;
-                      void action(async () => {
-                        const { error: err } = await supabase!
-                          .from("profiles")
-                          .update({ is_active: !u.is_active })
-                          .eq("id", u.id);
-                        if (err) throw err;
-                        await loadUsers();
-                      });
-                    }}
-                  >
-                    {u.is_active ? "Revoke access" : "Restore access"}
-                  </button>
-                )}
-              </article>
-            ))}
+                          return;
+                        void action(async () => {
+                          const { error: err } = await supabase!
+                            .from("profiles")
+                            .update({
+                              is_active: !u.is_active,
+                              ...(u.is_archived ? { is_archived: false } : {}),
+                            })
+                            .eq("id", u.id);
+                          if (err) throw err;
+                          await loadUsers();
+                        });
+                      }}
+                    >
+                      {u.is_active ? "Revoke access" : "Restore access"}
+                    </button>
+                  )}
+                  {u.id !== currentUser && !u.is_active && u.is_archived !== undefined && (
+                    <button
+                      disabled={busy}
+                      onClick={() => {
+                        if (
+                          !u.is_archived &&
+                          !window.confirm(
+                            `Remove ${u.email} from the list? Access stays revoked and feedback is kept. You can find them under Show removed users.`,
+                          )
+                        )
+                          return;
+                        void action(async () => {
+                          const { data, error: err } = await supabase!
+                            .from("profiles")
+                            .update({ is_archived: !u.is_archived })
+                            .eq("id", u.id)
+                            .eq("is_active", false)
+                            .select("id");
+                          if (err) throw err;
+                          if (!data?.length)
+                            throw new Error(
+                              "This user’s access changed. Refresh the list and try again.",
+                            );
+                          await loadUsers();
+                          setMessage(
+                            u.is_archived
+                              ? "User returned to the list. Access remains revoked."
+                              : "User removed from the list. Feedback preserved.",
+                          );
+                        });
+                      }}
+                    >
+                      {u.is_archived ? "Return to list" : "Remove from list"}
+                    </button>
+                  )}
+                </article>
+              ))}
           </div>
         </>
       )}

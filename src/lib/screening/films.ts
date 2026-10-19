@@ -4,6 +4,7 @@ export type Profile = {
   display_name: string;
   role: "admin" | "viewer";
   is_active: boolean;
+  is_archived?: boolean;
 };
 export type Project = { id: string; title: string; description: string };
 export type Category = { id: string; name: string; slug: string; sort_order: number };

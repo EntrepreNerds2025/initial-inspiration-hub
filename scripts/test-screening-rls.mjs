@@ -41,6 +41,34 @@ try {
       get diagnostics n=row_count; if n<>0 then raise exception 'Viewer edited creator note'; end if;
     end $$;
     reset role; rollback;`);
+  await db.exec(await readFile("supabase/migrations/202610190001_archive_revoked_users.sql", "utf8"));
+  await db.exec(`begin;
+    insert into auth.users(id,email,invited_at) values('84000000-0000-4000-8000-000000000001','admin@test.invalid',now());
+    set constraints all immediate;
+    update public.profiles set role='admin' where id='84000000-0000-4000-8000-000000000001';
+    set local role authenticated;
+    select set_config('request.jwt.claim.sub','80000000-0000-4000-8000-000000000001',true);
+    do $$ declare n integer; begin
+      update public.profiles set is_archived=true,is_active=false where id=auth.uid();
+      get diagnostics n=row_count; if n<>0 then raise exception 'Viewer archived own account'; end if;
+    end $$;
+    select set_config('request.jwt.claim.sub','84000000-0000-4000-8000-000000000001',true);
+    do $$ begin
+      begin
+        update public.profiles set is_archived=true where id='80000000-0000-4000-8000-000000000001';
+        raise exception 'Active user archived';
+      exception when check_violation then null; end;
+    end $$;
+    update public.profiles set is_active=false,is_archived=true where id='80000000-0000-4000-8000-000000000001';
+    do $$ begin
+      if not exists(select 1 from public.profiles where id='80000000-0000-4000-8000-000000000001' and is_archived and not is_active) then raise exception 'Admin archive failed'; end if;
+    end $$;
+    select set_config('request.jwt.claim.sub','80000000-0000-4000-8000-000000000001',true);
+    do $$ begin if public.is_member() then raise exception 'Archived viewer retains access'; end if; end $$;
+    select set_config('request.jwt.claim.sub','84000000-0000-4000-8000-000000000001',true);
+    update public.profiles set is_archived=false where id='80000000-0000-4000-8000-000000000001';
+    do $$ begin if exists(select 1 from public.profiles where id='80000000-0000-4000-8000-000000000001' and (is_archived or is_active)) then raise exception 'Return to list restored access'; end if; end $$;
+    reset role; rollback;`);
   console.log(
     "PASS: real PostgreSQL RLS migration and permission assertions in isolated PGlite. No live database modified.",
   );
