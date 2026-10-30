@@ -13,13 +13,13 @@ import Footer from "@/components/site/Footer";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Riann Grant | The Department Collective" },
+      { title: "The Dept Collective" },
       {
         name: "description",
         content:
-          "Riann Grant is a director and cinematographer and creative lead of The Department Collective. Brand films, documentaries, and community stories with care in every frame.",
+          "The Dept Collective is a visual storytelling studio in Toronto, Canada. Brand films, documentaries, and community stories with care in every frame.",
       },
-      { property: "og:title", content: "Riann Grant | The Department Collective" },
+      { property: "og:title", content: "The Dept Collective" },
       {
         property: "og:description",
         content: "Director & cinematographer. Brand films, documentaries, and community stories.",

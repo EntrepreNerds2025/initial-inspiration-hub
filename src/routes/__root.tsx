@@ -79,14 +79,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "apple-mobile-web-app-title", content: "Dept. Collective" },
       { name: "theme-color", content: "#101010" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "The Dept Collective" },
+      {
+        name: "description",
+        content:
+          "A visual storytelling studio in Toronto, Canada. Films, documentaries, and creative production.",
+      },
+      { name: "author", content: "The Dept Collective" },
+      { property: "og:title", content: "The Dept Collective" },
+      {
+        property: "og:description",
+        content:
+          "A visual storytelling studio in Toronto, Canada. Films, documentaries, and creative production.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "The Dept Collective" },
+      { property: "og:site_name", content: "The Dept Collective" },
     ],
     links: [
       {
