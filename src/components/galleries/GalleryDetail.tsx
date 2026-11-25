@@ -18,17 +18,30 @@ export function GalleryCollection({
   return (
     <main className="dg-detail">
       <header className="dg-cover">
-        {gallery.cover && <PhotoImage photo={gallery.cover} eager />}
         <div className="dg-cover-caption">
+          <a href="/galleries" className="dg-cover-back">
+            ← All collections
+          </a>
           <span className="dg-label">
-            {privateAccess ? "PRIVATE COLLECTION" : gallery.category}
+            {gallery.category}
+            {privateAccess ? " / PRIVATE COLLECTION" : ""}
           </span>
           <h1>{gallery.title}</h1>
           <p>
             {String(gallery.photo_count ?? gallery.photos.length).padStart(2, "0")} PHOTOGRAPHS{" "}
-            <span>SCROLL TO EXPLORE ↓</span>
+            <a href="#gallery-frames">Explore the collection ↓</a>
           </p>
         </div>
+        {gallery.cover && (
+          <figure
+            className="dg-cover-media"
+            style={
+              { "--cover-ratio": gallery.cover.width / gallery.cover.height } as React.CSSProperties
+            }
+          >
+            <PhotoImage photo={gallery.cover} eager />
+          </figure>
+        )}
       </header>
       <section className="dg-gallery-intro">
         <a href="/galleries" className="dg-text-link">
@@ -39,7 +52,7 @@ export function GalleryCollection({
           <span className="dg-label">THE DEPT COLLECTIVE / PHOTOGRAPHY</span>
         </div>
       </section>
-      <div className="dg-gallery-toolbar">
+      <div className="dg-gallery-toolbar" id="gallery-frames">
         <span className="dg-label">
           THE COLLECTION / {String(gallery.photo_count ?? gallery.photos.length).padStart(2, "0")}{" "}
           FRAMES
