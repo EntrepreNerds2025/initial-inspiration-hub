@@ -11,10 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DepartmentsRouteImport } from './routes/departments'
+import { Route as GalleriesRouteImport } from './routes/galleries'
 import { Route as PackagesRouteImport } from './routes/packages'
 import { Route as ScreeningRoomRouteImport } from './routes/screening-room'
 import { Route as StartRouteImport } from './routes/start'
+import { Route as AdminGalleriesRouteImport } from './routes/admin.galleries'
 import { Route as DepartmentsScribeRouteImport } from './routes/departments_.scribe'
+import { Route as GalleriesIndexRouteImport } from './routes/galleries.index'
+import { Route as GalleriesSlugRouteImport } from './routes/galleries.$slug'
 import { Route as ScreeningRoomIndexRouteImport } from './routes/screening-room.index'
 import { Route as ScreeningRoomSplatRouteImport } from './routes/screening-room.$'
 import { Route as ScreeningRoomAdminRouteImport } from './routes/screening-room.admin'
@@ -25,6 +29,8 @@ import { Route as ScreeningRoomLoginRouteImport } from './routes/screening-room.
 import { Route as ScreeningRoomMyListRouteImport } from './routes/screening-room.my-list'
 import { Route as ScreeningRoomScreeningRouteImport } from './routes/screening-room.screening'
 import { Route as ScreeningRoomSearchRouteImport } from './routes/screening-room.search'
+import { Route as ApiGalleriesIndexRouteImport } from './routes/api.galleries.index'
+import { Route as ApiGalleriesSlugRouteImport } from './routes/api.galleries.$slug'
 import { Route as DepartmentsScribeYourResponseRouteImport } from './routes/departments_.scribe_.your-response'
 import { Route as ScreeningRoomFilmsFilmIdRouteImport } from './routes/screening-room.films.$filmId'
 
@@ -36,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
 const DepartmentsRoute = DepartmentsRouteImport.update({
   id: '/departments',
   path: '/departments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleriesRoute = GalleriesRouteImport.update({
+  id: '/galleries',
+  path: '/galleries',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PackagesRoute = PackagesRouteImport.update({
@@ -53,10 +64,25 @@ const StartRoute = StartRouteImport.update({
   path: '/start',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminGalleriesRoute = AdminGalleriesRouteImport.update({
+  id: '/admin/galleries',
+  path: '/admin/galleries',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DepartmentsScribeRoute = DepartmentsScribeRouteImport.update({
   id: '/departments_/scribe',
   path: '/departments/scribe',
   getParentRoute: () => rootRouteImport,
+} as any)
+const GalleriesIndexRoute = GalleriesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GalleriesRoute,
+} as any)
+const GalleriesSlugRoute = GalleriesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => GalleriesRoute,
 } as any)
 const ScreeningRoomIndexRoute = ScreeningRoomIndexRouteImport.update({
   id: '/',
@@ -109,6 +135,16 @@ const ScreeningRoomSearchRoute = ScreeningRoomSearchRouteImport.update({
   path: '/search',
   getParentRoute: () => ScreeningRoomRoute,
 } as any)
+const ApiGalleriesIndexRoute = ApiGalleriesIndexRouteImport.update({
+  id: '/api/galleries/',
+  path: '/api/galleries/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGalleriesSlugRoute = ApiGalleriesSlugRouteImport.update({
+  id: '/api/galleries/$slug',
+  path: '/api/galleries/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DepartmentsScribeYourResponseRoute =
   DepartmentsScribeYourResponseRouteImport.update({
     id: '/departments_/scribe_/your-response',
@@ -125,10 +161,13 @@ const ScreeningRoomFilmsFilmIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
+  '/galleries': typeof GalleriesRouteWithChildren
   '/packages': typeof PackagesRoute
   '/screening-room': typeof ScreeningRoomRouteWithChildren
   '/start': typeof StartRoute
+  '/admin/galleries': typeof AdminGalleriesRoute
   '/departments/scribe': typeof DepartmentsScribeRoute
+  '/galleries/$slug': typeof GalleriesSlugRoute
   '/screening-room/$': typeof ScreeningRoomSplatRoute
   '/screening-room/admin': typeof ScreeningRoomAdminRoute
   '/screening-room/callback': typeof ScreeningRoomCallbackRoute
@@ -138,16 +177,21 @@ export interface FileRoutesByFullPath {
   '/screening-room/my-list': typeof ScreeningRoomMyListRoute
   '/screening-room/screening': typeof ScreeningRoomScreeningRoute
   '/screening-room/search': typeof ScreeningRoomSearchRoute
+  '/galleries/': typeof GalleriesIndexRoute
   '/screening-room/': typeof ScreeningRoomIndexRoute
+  '/api/galleries/$slug': typeof ApiGalleriesSlugRoute
   '/departments/scribe/your-response': typeof DepartmentsScribeYourResponseRoute
   '/screening-room/films/$filmId': typeof ScreeningRoomFilmsFilmIdRoute
+  '/api/galleries/': typeof ApiGalleriesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
   '/packages': typeof PackagesRoute
   '/start': typeof StartRoute
+  '/admin/galleries': typeof AdminGalleriesRoute
   '/departments/scribe': typeof DepartmentsScribeRoute
+  '/galleries/$slug': typeof GalleriesSlugRoute
   '/screening-room/$': typeof ScreeningRoomSplatRoute
   '/screening-room/admin': typeof ScreeningRoomAdminRoute
   '/screening-room/callback': typeof ScreeningRoomCallbackRoute
@@ -157,18 +201,24 @@ export interface FileRoutesByTo {
   '/screening-room/my-list': typeof ScreeningRoomMyListRoute
   '/screening-room/screening': typeof ScreeningRoomScreeningRoute
   '/screening-room/search': typeof ScreeningRoomSearchRoute
+  '/galleries': typeof GalleriesIndexRoute
   '/screening-room': typeof ScreeningRoomIndexRoute
+  '/api/galleries/$slug': typeof ApiGalleriesSlugRoute
   '/departments/scribe/your-response': typeof DepartmentsScribeYourResponseRoute
   '/screening-room/films/$filmId': typeof ScreeningRoomFilmsFilmIdRoute
+  '/api/galleries': typeof ApiGalleriesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/departments': typeof DepartmentsRoute
+  '/galleries': typeof GalleriesRouteWithChildren
   '/packages': typeof PackagesRoute
   '/screening-room': typeof ScreeningRoomRouteWithChildren
   '/start': typeof StartRoute
+  '/admin/galleries': typeof AdminGalleriesRoute
   '/departments_/scribe': typeof DepartmentsScribeRoute
+  '/galleries/$slug': typeof GalleriesSlugRoute
   '/screening-room/$': typeof ScreeningRoomSplatRoute
   '/screening-room/admin': typeof ScreeningRoomAdminRoute
   '/screening-room/callback': typeof ScreeningRoomCallbackRoute
@@ -178,19 +228,25 @@ export interface FileRoutesById {
   '/screening-room/my-list': typeof ScreeningRoomMyListRoute
   '/screening-room/screening': typeof ScreeningRoomScreeningRoute
   '/screening-room/search': typeof ScreeningRoomSearchRoute
+  '/galleries/': typeof GalleriesIndexRoute
   '/screening-room/': typeof ScreeningRoomIndexRoute
+  '/api/galleries/$slug': typeof ApiGalleriesSlugRoute
   '/departments_/scribe_/your-response': typeof DepartmentsScribeYourResponseRoute
   '/screening-room/films/$filmId': typeof ScreeningRoomFilmsFilmIdRoute
+  '/api/galleries/': typeof ApiGalleriesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/departments'
+    | '/galleries'
     | '/packages'
     | '/screening-room'
     | '/start'
+    | '/admin/galleries'
     | '/departments/scribe'
+    | '/galleries/$slug'
     | '/screening-room/$'
     | '/screening-room/admin'
     | '/screening-room/callback'
@@ -200,16 +256,21 @@ export interface FileRouteTypes {
     | '/screening-room/my-list'
     | '/screening-room/screening'
     | '/screening-room/search'
+    | '/galleries/'
     | '/screening-room/'
+    | '/api/galleries/$slug'
     | '/departments/scribe/your-response'
     | '/screening-room/films/$filmId'
+    | '/api/galleries/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/departments'
     | '/packages'
     | '/start'
+    | '/admin/galleries'
     | '/departments/scribe'
+    | '/galleries/$slug'
     | '/screening-room/$'
     | '/screening-room/admin'
     | '/screening-room/callback'
@@ -219,17 +280,23 @@ export interface FileRouteTypes {
     | '/screening-room/my-list'
     | '/screening-room/screening'
     | '/screening-room/search'
+    | '/galleries'
     | '/screening-room'
+    | '/api/galleries/$slug'
     | '/departments/scribe/your-response'
     | '/screening-room/films/$filmId'
+    | '/api/galleries'
   id:
     | '__root__'
     | '/'
     | '/departments'
+    | '/galleries'
     | '/packages'
     | '/screening-room'
     | '/start'
+    | '/admin/galleries'
     | '/departments_/scribe'
+    | '/galleries/$slug'
     | '/screening-room/$'
     | '/screening-room/admin'
     | '/screening-room/callback'
@@ -239,19 +306,26 @@ export interface FileRouteTypes {
     | '/screening-room/my-list'
     | '/screening-room/screening'
     | '/screening-room/search'
+    | '/galleries/'
     | '/screening-room/'
+    | '/api/galleries/$slug'
     | '/departments_/scribe_/your-response'
     | '/screening-room/films/$filmId'
+    | '/api/galleries/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DepartmentsRoute: typeof DepartmentsRoute
+  GalleriesRoute: typeof GalleriesRouteWithChildren
   PackagesRoute: typeof PackagesRoute
   ScreeningRoomRoute: typeof ScreeningRoomRouteWithChildren
   StartRoute: typeof StartRoute
+  AdminGalleriesRoute: typeof AdminGalleriesRoute
   DepartmentsScribeRoute: typeof DepartmentsScribeRoute
+  ApiGalleriesSlugRoute: typeof ApiGalleriesSlugRoute
   DepartmentsScribeYourResponseRoute: typeof DepartmentsScribeYourResponseRoute
+  ApiGalleriesIndexRoute: typeof ApiGalleriesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -268,6 +342,13 @@ declare module '@tanstack/react-router' {
       path: '/departments'
       fullPath: '/departments'
       preLoaderRoute: typeof DepartmentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galleries': {
+      id: '/galleries'
+      path: '/galleries'
+      fullPath: '/galleries'
+      preLoaderRoute: typeof GalleriesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/packages': {
@@ -291,12 +372,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/galleries': {
+      id: '/admin/galleries'
+      path: '/admin/galleries'
+      fullPath: '/admin/galleries'
+      preLoaderRoute: typeof AdminGalleriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/departments_/scribe': {
       id: '/departments_/scribe'
       path: '/departments/scribe'
       fullPath: '/departments/scribe'
       preLoaderRoute: typeof DepartmentsScribeRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/galleries/': {
+      id: '/galleries/'
+      path: '/'
+      fullPath: '/galleries/'
+      preLoaderRoute: typeof GalleriesIndexRouteImport
+      parentRoute: typeof GalleriesRoute
+    }
+    '/galleries/$slug': {
+      id: '/galleries/$slug'
+      path: '/$slug'
+      fullPath: '/galleries/$slug'
+      preLoaderRoute: typeof GalleriesSlugRouteImport
+      parentRoute: typeof GalleriesRoute
     }
     '/screening-room/': {
       id: '/screening-room/'
@@ -368,6 +470,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScreeningRoomSearchRouteImport
       parentRoute: typeof ScreeningRoomRoute
     }
+    '/api/galleries/': {
+      id: '/api/galleries/'
+      path: '/api/galleries'
+      fullPath: '/api/galleries/'
+      preLoaderRoute: typeof ApiGalleriesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/galleries/$slug': {
+      id: '/api/galleries/$slug'
+      path: '/api/galleries/$slug'
+      fullPath: '/api/galleries/$slug'
+      preLoaderRoute: typeof ApiGalleriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/departments_/scribe_/your-response': {
       id: '/departments_/scribe_/your-response'
       path: '/departments/scribe/your-response'
@@ -384,6 +500,20 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface GalleriesRouteChildren {
+  GalleriesSlugRoute: typeof GalleriesSlugRoute
+  GalleriesIndexRoute: typeof GalleriesIndexRoute
+}
+
+const GalleriesRouteChildren: GalleriesRouteChildren = {
+  GalleriesSlugRoute: GalleriesSlugRoute,
+  GalleriesIndexRoute: GalleriesIndexRoute,
+}
+
+const GalleriesRouteWithChildren = GalleriesRoute._addFileChildren(
+  GalleriesRouteChildren,
+)
 
 interface ScreeningRoomRouteChildren {
   ScreeningRoomSplatRoute: typeof ScreeningRoomSplatRoute
@@ -420,11 +550,15 @@ const ScreeningRoomRouteWithChildren = ScreeningRoomRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DepartmentsRoute: DepartmentsRoute,
+  GalleriesRoute: GalleriesRouteWithChildren,
   PackagesRoute: PackagesRoute,
   ScreeningRoomRoute: ScreeningRoomRouteWithChildren,
   StartRoute: StartRoute,
+  AdminGalleriesRoute: AdminGalleriesRoute,
   DepartmentsScribeRoute: DepartmentsScribeRoute,
+  ApiGalleriesSlugRoute: ApiGalleriesSlugRoute,
   DepartmentsScribeYourResponseRoute: DepartmentsScribeYourResponseRoute,
+  ApiGalleriesIndexRoute: ApiGalleriesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

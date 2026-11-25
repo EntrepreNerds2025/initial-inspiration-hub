@@ -1,0 +1,67 @@
+-- Run after galleries.sql in the same disposable test transaction, then ROLLBACK.
+reset role;
+select pg_temp.gallery_assert((select title='First collection' from public.dept_galleries where slug='existing-private-draft'),'existing draft preserved');
+select pg_temp.gallery_assert((select not public from storage.buckets where id='dept-gallery-previews'),'preview bucket is private');
+select pg_temp.gallery_assert(not has_function_privilege('anon','public.gallery_media_manifest(text,text,uuid)','execute'),'anonymous cannot retrieve signing manifest');
+select pg_temp.gallery_assert(not has_function_privilege('authenticated','public.gallery_preview_finish(uuid,uuid)','execute'),'browser cannot finalize arbitrary objects');
+select pg_temp.gallery_assert(not has_table_privilege('anon','dept_gallery_private.delivery','select'),'private URL table hidden');
+select pg_temp.gallery_assert(not has_function_privilege('authenticated','public.gallery_save_phase2(jsonb,text)','execute'),'old save implementation not exposed');
+select pg_temp.gallery_assert(public.gallery_media_manifest('phase2-test-private')->>'state'='locked','private manifest requires session');
+select pg_temp.gallery_assert(public.gallery_media_manifest('phase2-test-draft')->>'state'='locked','draft manifest locked');
+select pg_temp.gallery_assert(public.gallery_media_manifest('phase2-test-expired')->>'state'='locked','expired manifest locked');
+select pg_temp.gallery_assert(public.gallery_media_manifest('phase2-test-draft',null,current_setting('test.gallery.viewer')::uuid)->>'state'='locked','viewer cannot use admin preview');
+select pg_temp.gallery_assert(public.gallery_media_manifest('phase2-test-draft',null,current_setting('test.gallery.admin')::uuid) ? 'gallery','admin can preview draft');
+set local role authenticated;
+select set_config('request.jwt.claim.sub',current_setting('test.gallery.admin'),true);
+select public.gallery_save(jsonb_build_object('id','d9000000-0000-4000-8000-000000000005','slug','delivery-test','title','Delivery','visibility','public','status','published','download_url','https://ug.link/dept-hq/filemgr/share-download/?id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa','downloads_enabled',true));
+reset role;
+select pg_temp.gallery_assert(public.gallery_media_manifest('delivery-test')->>'download_url' like 'https://ug.link/%','enabled public share released');
+select pg_temp.gallery_assert(public.gallery_resolve('delivery-test')::text not like '%share-download%','public RPC never leaks delivery URL');
+select pg_temp.gallery_assert(public.gallery_directory()::text not like '%share-download%','directory hides delivery links');
+do $$begin
+ begin perform public.gallery_preview_reserve(current_setting('test.gallery.viewer')::uuid,gen_random_uuid(),'d9000000-0000-4000-8000-000000000005',null,'test.jpg',10000,1000,1600,1000); raise exception 'viewer uploaded';exception when insufficient_privilege then null;end;
+end;$$;
+select public.gallery_preview_reserve(current_setting('test.gallery.admin')::uuid,'b0000000-0000-4000-8000-000000000001','d9000000-0000-4000-8000-000000000005',null,'original.jpg',10000,1000,1600,1000);
+do $$begin
+ begin perform public.gallery_preview_finish(current_setting('test.gallery.admin')::uuid,'b0000000-0000-4000-8000-000000000001');raise exception 'missing object finalized';exception when raise_exception then if sqlerrm='missing object finalized' then raise;end if;end;
+end;$$;
+insert into storage.objects(bucket_id,name) select 'dept-gallery-previews',object_key from dept_gallery_private.preview_uploads where id='b0000000-0000-4000-8000-000000000001';
+select set_config('test.gallery.oldkey',(select object_key from dept_gallery_private.preview_uploads where id='b0000000-0000-4000-8000-000000000001'),true);
+select set_config('test.gallery.photo',public.gallery_preview_finish(current_setting('test.gallery.admin')::uuid,'b0000000-0000-4000-8000-000000000001')::text,true);
+select pg_temp.gallery_assert(public.gallery_preview_finish(current_setting('test.gallery.admin')::uuid,'b0000000-0000-4000-8000-000000000001')::text=current_setting('test.gallery.photo'),'finalization is idempotent');
+select pg_temp.gallery_assert((select original_object_key is null and preview_file_size=1000 from public.dept_gallery_photos where id=current_setting('test.gallery.photo')::uuid),'no original stored');
+select pg_temp.gallery_assert((select cover_photo_id=current_setting('test.gallery.photo')::uuid from public.dept_galleries where slug='delivery-test'),'first upload sets cover');
+select public.gallery_preview_reserve(current_setting('test.gallery.admin')::uuid,'b0000000-0000-4000-8000-000000000002','d9000000-0000-4000-8000-000000000005',current_setting('test.gallery.photo')::uuid,'replacement.jpg',11000,1100,1600,1000);
+insert into storage.objects(bucket_id,name) select 'dept-gallery-previews',object_key from dept_gallery_private.preview_uploads where id='b0000000-0000-4000-8000-000000000002';
+select set_config('test.gallery.newkey',(select object_key from dept_gallery_private.preview_uploads where id='b0000000-0000-4000-8000-000000000002'),true);
+select public.gallery_preview_finish(current_setting('test.gallery.admin')::uuid,'b0000000-0000-4000-8000-000000000002');
+select pg_temp.gallery_assert((select count(*)=1 from public.dept_gallery_photos where gallery_id='d9000000-0000-4000-8000-000000000005'),'replacement retains one record');
+select pg_temp.gallery_assert(position(current_setting('test.gallery.oldkey') in public.gallery_preview_cleanup()::text)>0,'obsolete replacement queued');
+select pg_temp.gallery_assert(position(current_setting('test.gallery.newkey') in public.gallery_preview_cleanup()::text)=0,'active preview protected from cleanup');
+update dept_gallery_private.delivery set enabled=false where gallery_id='d9000000-0000-4000-8000-000000000005';
+select pg_temp.gallery_assert(public.gallery_media_manifest('delivery-test')->>'download_url' is null,'disabled download hidden');
+update dept_gallery_private.delivery set enabled=true where gallery_id='d9000000-0000-4000-8000-000000000005';
+update public.dept_galleries set expires_at=now()-interval '1 second' where slug='delivery-test';
+select pg_temp.gallery_assert(public.gallery_media_manifest('delivery-test')->>'state'='locked','expiry denies media and downloads');
+do $$begin begin update dept_gallery_private.delivery set url='https://evil.example' where gallery_id='d9000000-0000-4000-8000-000000000005';raise exception 'unsafe URL saved';exception when check_violation then null;end;end;$$;
+select 'PASS: Phase 3 delivery permissions and preview lifecycle' as result;
+reset role;
+-- Authorized private sessions, cross-gallery isolation, link replacement/removal and revocation.
+insert into dept_gallery_private.delivery(gallery_id,url,enabled) values('d9000000-0000-4000-8000-000000000002','https://ug.link/dept-hq/filemgr/share-download/?id=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',true);
+insert into dept_gallery_private.access_sessions(token_hash,gallery_id,expires_at) values(encode(extensions.digest(repeat('c',64),'sha256'),'hex'),'d9000000-0000-4000-8000-000000000002',now()+interval '45 seconds');
+select pg_temp.gallery_assert(public.gallery_media_manifest('phase2-test-private',repeat('c',64))->>'download_url' like '%bbbbbbbb%','private session releases its link');
+select pg_temp.gallery_assert((public.gallery_media_manifest('phase2-test-private',repeat('c',64))->>'ttl')::integer<=45,'signing cannot outlive private session');
+select pg_temp.gallery_assert(public.gallery_media_manifest('phase2-test-private',repeat('d',64))->>'state'='locked','wrong token cannot retrieve private URL');
+update dept_gallery_private.delivery set url='https://ug.link/dept-hq/filemgr/share-download/?id=cccccccccccccccccccccccccccccccc' where gallery_id='d9000000-0000-4000-8000-000000000002';
+select pg_temp.gallery_assert(public.gallery_media_manifest('phase2-test-private',repeat('c',64))->>'download_url' like '%cccccccc%','replacement link takes effect');
+update dept_gallery_private.delivery set url=null,enabled=false where gallery_id='d9000000-0000-4000-8000-000000000002';
+select pg_temp.gallery_assert(public.gallery_media_manifest('phase2-test-private',repeat('c',64))->>'download_url' is null,'removed URL cannot be released');
+update public.dept_galleries set status='draft' where slug='phase2-test-private';
+select pg_temp.gallery_assert(public.gallery_media_manifest('phase2-test-private',repeat('c',64))->>'state'='locked','unpublication revokes access');
+set local role anon;
+do $$begin
+ begin perform * from public.dept_gallery_photos;raise exception 'anonymous read private photos';exception when insufficient_privilege then null;end;
+ begin perform * from dept_gallery_private.delivery;raise exception 'anonymous read share URLs';exception when insufficient_privilege then null;end;
+ begin perform public.gallery_media_manifest('delivery-test');raise exception 'anonymous read signing manifest';exception when insufficient_privilege then null;end;
+end;$$;
+reset role;

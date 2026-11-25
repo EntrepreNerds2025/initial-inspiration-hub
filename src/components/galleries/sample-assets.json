@@ -1,0 +1,50 @@
+[
+  {
+    "id": "coast-01",
+    "source": "https://unsplash.com/photos/rocky-coastline-with-misty-ocean-waves-7wL-HlNfi4Y",
+    "preview_url": "/media/galleries/coast-01.webp",
+    "width": 1600,
+    "height": 1067,
+    "preview_bytes": 189912
+  },
+  {
+    "id": "coast-02",
+    "source": "https://unsplash.com/photos/waves-crash-on-a-misty-coastline-under-a-cloudy-sky-wxEFIdymo4Q",
+    "preview_url": "/media/galleries/coast-02.webp",
+    "width": 1600,
+    "height": 899,
+    "preview_bytes": 134336
+  },
+  {
+    "id": "coast-03",
+    "source": "https://unsplash.com/photos/misty-coastal-cliffs-overlooking-the-ocean-waves-AoNkf6YKYXs",
+    "preview_url": "/media/galleries/coast-03.webp",
+    "width": 1600,
+    "height": 1067,
+    "preview_bytes": 303156
+  },
+  {
+    "id": "form-01",
+    "source": "https://unsplash.com/photos/concrete-building-facade-with-windows-q0S8mdedWH0",
+    "preview_url": "/media/galleries/form-01.webp",
+    "width": 1600,
+    "height": 1067,
+    "preview_bytes": 846502
+  },
+  {
+    "id": "form-02",
+    "source": "https://unsplash.com/photos/curved-concrete-building-facade-with-repeating-windows-v5b5_v3_dyQ",
+    "preview_url": "/media/galleries/form-02.webp",
+    "width": 1600,
+    "height": 2000,
+    "preview_bytes": 731962
+  },
+  {
+    "id": "form-03",
+    "source": "https://unsplash.com/photos/concrete-pillars-line-the-exterior-of-a-modern-building-VQbpgDEstfU",
+    "preview_url": "/media/galleries/form-03.webp",
+    "width": 1600,
+    "height": 2400,
+    "preview_bytes": 786938
+  }
+]
