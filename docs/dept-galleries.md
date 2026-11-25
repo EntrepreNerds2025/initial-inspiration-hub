@@ -95,10 +95,10 @@ No upgrades or paid image transforms enabled. At inspection the project is on Fr
 
 References: [Storage access control](https://supabase.com/docs/guides/storage/security/access-control), [Edge authorization](https://supabase.com/docs/guides/functions/auth), [Supabase usage](https://supabase.com/docs/guides/platform/billing-on-supabase).
 
-## Optional password update — prepared, not applied
+## Optional password update — applied November 25, 2026
 
 `202611250002_gallery_optional_password.sql` adds a protected access-settings table and secure-link session exchange. Existing galleries default to password-required; existing password hashes and photo records are preserved. New passwords require at least four characters and remain limited to 72 UTF-8 bytes for bcrypt compatibility. Existing password attempt limiting remains unchanged.
 
 The admin editor offers **Require a gallery password**. Turning it off keeps the gallery private/unlisted but lets anyone holding the full generated link enter without typing a password. **Copy gallery link** includes a random 256-bit key in a URL fragment. The page exchanges it for the same short-lived HttpOnly session, removes the fragment from the address bar, and uses the existing media service authorization. Slugs alone grant no private access. Re-enabling the password invalidates the prior share key and issued sessions. Changing modes does not remove the previously stored password hash. UGREEN's own share password is unaffected.
 
-This update is local only and needs explicit database-migration approval followed by website publication approval. The already-deployed media service requires no change. Private share links are credentials: recipients can forward them. After a link session expires, reopen the full shared link.
+Code was pushed to main in f329732. The matching database migration was explicitly approved and applied November 25, 2026. Live transactional tests passed for four-character passwords, rejection of three-character passwords, secure-link sessions, private directory exclusion, mode-change revocation and password-change revocation. Test fixtures were rolled back; the existing one gallery and four photos remain intact. The already-deployed media service requires no change. Private share links are credentials: recipients can forward them. After a link session expires, reopen the full shared link.
