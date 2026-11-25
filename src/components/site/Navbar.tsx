@@ -3,6 +3,7 @@ import deptLogo from "@/assets/dept-logo-beige.png";
 
 const links = [
   { label: "Work", href: "#work" },
+  { label: "Galleries", href: "/galleries" },
   { label: "Departments", href: "/departments" },
   { label: "Packages", href: "#packages" },
   { label: "The Collective", href: "#director" },
