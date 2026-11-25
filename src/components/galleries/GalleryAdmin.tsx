@@ -289,7 +289,15 @@ function Workspace() {
               <button
                 className="dg-button"
                 onClick={async () => {
-                  const link = location.origin + "/galleries/" + active.slug;
+                  const link =
+                    location.origin +
+                    "/galleries/" +
+                    active.slug +
+                    (active.visibility === "private" &&
+                    active.passwordRequired === false &&
+                    active.shareKey
+                      ? "#access=" + active.shareKey
+                      : "");
                   try {
                     await navigator.clipboard.writeText(link);
                     setNotice(

@@ -84,13 +84,17 @@ export async function galleryAccessRequest(request: Request, slug: string) {
     } catch {
       return reply({ error: "Invalid request" }, 400);
     }
+    const linkAccess = typeof data?.shareKey === "string" && /^[a-f0-9]{64}$/.test(data.shareKey);
     if (
-      !data ||
-      typeof data.password !== "string" ||
-      new TextEncoder().encode(data.password).length > 72
+      !linkAccess &&
+      (!data ||
+        typeof data.password !== "string" ||
+        new TextEncoder().encode(data.password).length > 72)
     )
       return reply({ state: "invalid" }, 400);
-    const result = await rpc("gallery_unlock", { p_slug: slug, p_password: data.password });
+    const result = linkAccess
+      ? await rpc("gallery_unlock_link", { p_slug: slug, p_key: data.shareKey })
+      : await rpc("gallery_unlock", { p_slug: slug, p_password: data.password });
     if (result.state !== "unlocked")
       return reply({ state: result.state }, result.state === "rate-limited" ? 429 : 200);
     // Bearer token stays in an HttpOnly, short-lived cookie, never returned to frontend JS.

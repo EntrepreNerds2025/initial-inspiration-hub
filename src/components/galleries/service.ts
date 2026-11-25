@@ -5,6 +5,8 @@ export interface ManagedGallery extends Gallery {
   revision: number;
   photos: Photo[];
   passwordConfigured: boolean;
+  passwordRequired?: boolean;
+  shareKey?: string | null;
   download_url?: string | null;
   downloads_enabled?: boolean;
 }
@@ -57,7 +59,7 @@ async function adminRpc(name: string, args?: Record<string, unknown>) {
 export const galleryAdminService = {
   list: async (): Promise<ManagedGallery[]> => adminRpc("gallery_admin_list"),
   save: async (g: ManagedGallery, password?: string): Promise<string> =>
-    adminRpc("gallery_save_delivery", {
+    adminRpc("gallery_save_access", {
       p_gallery: {
         id: g.id,
         slug: g.slug,
@@ -70,6 +72,7 @@ export const galleryAdminService = {
         sort_order: g.sort_order,
         cover_photo_id: g.cover_photo_id,
         revision: g.revision,
+        password_required: g.passwordRequired ?? true,
         ...(g.download_url !== undefined
           ? { download_url: g.download_url, downloads_enabled: g.downloads_enabled || false }
           : {}),
@@ -140,4 +143,20 @@ export async function uploadPreview(
     };
     xhr.send(preview);
   });
+}
+
+export async function unlockGalleryLink(slug: string, shareKey: string, signal: AbortSignal) {
+  const response = await fetch("/api/galleries/" + encodeURIComponent(slug), {
+    method: "POST",
+    credentials: "same-origin",
+    cache: "no-store",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ shareKey }),
+    signal,
+  });
+  if (!response.ok) throw new Error("Gallery link unavailable");
+  const result = await response.json();
+  return result.state === "unlocked"
+    ? { state: "authorized" as const, gallery: result.gallery }
+    : { state: "locked" as const };
 }

@@ -94,3 +94,11 @@ No production routes import demo-service/sample media. Old demo fixtures remain 
 No upgrades or paid image transforms enabled. At inspection the project is on Free. Supabase documents 1 GB free storage and separate bandwidth quotas; other project usage also counts. The 900 MB application budget leaves some headroom but is not a billing cap. Short-lived signing uses Edge invocations and image delivery uses bandwidth. UGREEN delivery uses your existing NAS/share service.
 
 References: [Storage access control](https://supabase.com/docs/guides/storage/security/access-control), [Edge authorization](https://supabase.com/docs/guides/functions/auth), [Supabase usage](https://supabase.com/docs/guides/platform/billing-on-supabase).
+
+## Optional password update — prepared, not applied
+
+`202611250002_gallery_optional_password.sql` adds a protected access-settings table and secure-link session exchange. Existing galleries default to password-required; existing password hashes and photo records are preserved. New passwords require at least four characters and remain limited to 72 UTF-8 bytes for bcrypt compatibility. Existing password attempt limiting remains unchanged.
+
+The admin editor offers **Require a gallery password**. Turning it off keeps the gallery private/unlisted but lets anyone holding the full generated link enter without typing a password. **Copy gallery link** includes a random 256-bit key in a URL fragment. The page exchanges it for the same short-lived HttpOnly session, removes the fragment from the address bar, and uses the existing media service authorization. Slugs alone grant no private access. Re-enabling the password invalidates the prior share key and issued sessions. Changing modes does not remove the previously stored password hash. UGREEN's own share password is unaffected.
+
+This update is local only and needs explicit database-migration approval followed by website publication approval. The already-deployed media service requires no change. Private share links are credentials: recipients can forward them. After a link session expires, reopen the full shared link.

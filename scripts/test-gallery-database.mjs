@@ -26,9 +26,13 @@ create table storage.objects(id uuid default gen_random_uuid(),bucket_id text,na
     `insert into public.dept_galleries(id,slug,title) values('d0000000-0000-4000-8000-000000000001','existing-private-draft','First collection');`,
   );
   await db.exec(await readFile("supabase/migrations/202611250001_gallery_delivery.sql", "utf8"));
+  await db.exec(
+    await readFile("supabase/migrations/202611250002_gallery_optional_password.sql", "utf8"),
+  );
   await db.exec("begin;");
   await db.exec(await readFile("supabase/tests/galleries.sql", "utf8"));
   await db.exec(await readFile("supabase/tests/gallery-delivery.sql", "utf8"));
+  await db.exec(await readFile("supabase/tests/gallery-optional-password.sql", "utf8"));
   await db.exec("rollback;");
   console.log(
     "PASS: Phase 2 regression and Phase 3 migration/RLS/delivery/upload lifecycle tests (isolated PostgreSQL; pgcrypto substituted).",

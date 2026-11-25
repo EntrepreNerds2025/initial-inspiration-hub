@@ -129,3 +129,24 @@ it("rejects unsafe download redirects even if a backend returns one", async () =
     ).status,
   ).toBe(403);
 });
+it("exchanges a secure share key for an HttpOnly session without exposing it in JSON", async () => {
+  const key = "d".repeat(64),
+    token = "e".repeat(64);
+  const network = vi
+    .fn()
+    .mockImplementation(async (url: string) =>
+      Response.json(
+        url.includes("gallery_unlock_link")
+          ? { state: "unlocked", token, expires_at: new Date(Date.now() + 900000).toISOString() }
+          : { state: "authorized", gallery: { title: "Link gallery" } },
+      ),
+    );
+  vi.stubGlobal("fetch", network);
+  const response = await galleryAccessRequest(req("POST", { shareKey: key }), "client-gallery");
+  expect(response.status).toBe(200);
+  expect(response.headers.get("set-cookie")).toContain("HttpOnly");
+  const body = await response.text();
+  expect(body).not.toContain(key);
+  expect(body).not.toContain(token);
+  expect(network.mock.calls[0]![0]).toContain("gallery_unlock_link");
+});

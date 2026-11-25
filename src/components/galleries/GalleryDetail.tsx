@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { GalleryShell, GalleryLoading, GalleryMessage } from "./GalleryShell";
-import { galleryService, lockGallery } from "./service";
+import { galleryService, lockGallery, unlockGalleryLink } from "./service";
 import type { GalleryAccess, GalleryView } from "./types";
 import { PhotoImage } from "./PhotoImage";
 import { GalleryLightbox } from "./GalleryLightbox";
@@ -106,9 +106,18 @@ export function GalleryDetail({ slug }: { slug: string }) {
 
     setError(false);
     const c = new AbortController();
-    galleryService
-      .resolve(slug, c.signal)
-      .then(setAccess)
+    const shareKey = new URLSearchParams(location.hash.slice(1)).get("access");
+    const initial =
+      shareKey && /^[a-f0-9]{64}$/.test(shareKey)
+        ? unlockGalleryLink(slug, shareKey, c.signal)
+        : galleryService.resolve(slug, c.signal);
+    initial
+      .then((result) => {
+        if (c.signal.aborted) return;
+        if (shareKey && result.state === "authorized")
+          history.replaceState(history.state, "", location.pathname + location.search);
+        setAccess(result);
+      })
       .catch((e) => {
         if (e.name !== "AbortError") setError(true);
       });

@@ -153,13 +153,29 @@ export function GalleryAdminEditor({
               </label>
               {draft.visibility === "private" && (
                 <label className="dg-full">
+                  <span>
+                    <input
+                      type="checkbox"
+                      checked={draft.passwordRequired ?? true}
+                      onChange={(e) => setDraft({ ...draft, passwordRequired: e.target.checked })}
+                    />{" "}
+                    Require a gallery password
+                  </span>
+                  <small>
+                    When off, anyone with the complete secure share link can view this gallery. It
+                    stays out of public collections. Use Copy gallery link after saving.
+                  </small>
+                </label>
+              )}
+              {draft.visibility === "private" && (draft.passwordRequired ?? true) && (
+                <label className="dg-full">
                   {draft.passwordConfigured ? "Change gallery password" : "Set gallery password"}
                   <input
                     ref={password}
                     type="password"
                     autoComplete="off"
-                    placeholder="12–72 bytes; leave blank to keep unchanged"
-                    minLength={12}
+                    placeholder="At least 4 characters; leave blank to keep unchanged"
+                    minLength={4}
                     maxLength={72}
                   />
                   <small>

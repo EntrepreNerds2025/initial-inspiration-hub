@@ -54,7 +54,7 @@ export function PrivateGalleryAccess({
         <p>
           {state === "expired"
             ? "This gallery link has expired. Please contact the studio to arrange access."
-            : "Enter your gallery password to step inside."}
+            : "Enter your gallery password, or reopen the complete secure link shared by the studio."}
         </p>
         {state === "expired" ? (
           <a className="dg-button dg-primary" href="mailto:hello@thedeptcollective.com">
