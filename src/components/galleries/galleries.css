@@ -1421,3 +1421,124 @@ body:has(.dg)::after {
   max-height: 40vh;
   overflow: auto;
 }
+
+/* Gallery email tools reuse the existing editorial admin palette. */
+.dg-email {
+  margin: 36px 0;
+  padding: 32px 0;
+  border-block: 1px solid var(--dg-line);
+  font-size: 16px;
+}
+.dg-email header h3 {
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  margin: 12px 0;
+}
+.dg-email header p,
+.dg-email-help,
+.dg-email-sender {
+  color: var(--dg-muted);
+  max-width: 70ch;
+}
+.dg-email-sender {
+  font-size: 14px;
+  margin: 20px 0 !important;
+  overflow-wrap: anywhere;
+}
+.dg-email fieldset {
+  border: 0;
+  padding: 0;
+  margin: 24px 0;
+  min-width: 0;
+}
+.dg-email label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 18px 0;
+  font-size: 14px;
+}
+.dg-email input,
+.dg-email textarea,
+.dg-email select {
+  width: 100%;
+  min-width: 0;
+  background: #101010;
+  color: var(--dg-ink);
+  border: 1px solid var(--dg-line);
+  border-radius: 0;
+  padding: 12px;
+  font: inherit;
+}
+.dg-email textarea {
+  resize: vertical;
+}
+.dg-email-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.dg-email .dg-email-check {
+  flex-direction: row;
+  align-items: center;
+}
+.dg-email-check input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--dg-ink);
+}
+.dg-email-help {
+  font-size: 14px;
+  margin: 12px 0 !important;
+}
+.dg-email-preview {
+  margin: 28px 0;
+}
+.dg-email-preview p {
+  margin-bottom: 12px;
+  overflow-wrap: anywhere;
+}
+.dg-email-preview iframe {
+  width: 100%;
+  height: 630px;
+  border: 1px solid var(--dg-line);
+  background: #0a0a0a;
+}
+.dg-email-history {
+  margin-top: 28px;
+  overflow-wrap: anywhere;
+}
+.dg-email-history h4 {
+  font-weight: 400;
+  font-size: 18px;
+}
+.dg-email-history a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.dg-email-history ol {
+  list-style: none;
+  padding: 0;
+}
+.dg-email-history li {
+  display: grid;
+  gap: 6px;
+  border-bottom: 1px solid var(--dg-line);
+  padding: 16px 0;
+  font-size: 14px;
+}
+.dg-email-history li strong {
+  font-weight: 500;
+  text-transform: uppercase;
+}
+@media (max-width: 700px) {
+  .dg-email-fields {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .dg-email-preview iframe {
+    height: 700px;
+  }
+}

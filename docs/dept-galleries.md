@@ -1,5 +1,9 @@
 # DEPT. GALLERIES — Phase 3
 
+## Planned gallery email automation
+
+See [the $0 gallery-email implementation plan](./dept-gallery-email-plan.md) for branded delivery, expiration reminders, history, duplicate protection and free-tier safeguards. The local email editor, backend, additive migration and tests are prepared; no email scheduler, migration, deployment or live sending has been enabled. Existing gallery and Screening Room behavior is unchanged.
+
 ## Status and approval boundary
 
 Application implementation remains local. **The user-approved Phase 3 database/storage migration was applied on November 25, 2026.** The private JPEG preview bucket and protected database functions now exist. The gallery-media Edge Function was separately approved and deployed on November 25, 2026. The user authorized the gallery-only main-branch release after testing. Website hosting deployment must be verified separately. The user confirmed successful photo upload, private-gallery access and UGREEN download testing before authorizing the main-branch push. Do not rerun the Phase 3 migration. This project has no Supabase CLI migration-history table; this document records the dashboard application.

@@ -6,6 +6,7 @@ import type { GalleryView } from "./types";
 import { adminMedia, galleryAdminService, type ManagedGallery } from "./service";
 import { GalleryAdminEditor } from "./GalleryAdminEditor";
 import { GalleryAdminGate } from "./GalleryAdminGate";
+import { GalleryEmail } from "./GalleryEmail";
 import { GalleryUpload } from "./GalleryUpload";
 export function GalleryAdmin() {
   return (
@@ -315,6 +316,7 @@ function Workspace() {
                 Delete gallery
               </button>
             </div>
+            <GalleryEmail key={active.id} gallery={active} />
             <div className="dg-admin-photo-heading">
               <p className="dg-label">PHOTO SEQUENCE / DRAG OR USE ARROW BUTTONS</p>
               <span className="dg-label">
