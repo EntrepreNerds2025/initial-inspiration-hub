@@ -143,7 +143,7 @@
 .dg-collection-visual {
   position: relative;
   overflow: hidden;
-  background: #222222;
+  background: transparent;
 }
 .dg-photo {
   width: 100%;
@@ -164,6 +164,7 @@
   opacity: 1;
 }
 .dg-collection-visual .dg-photo {
+  background: transparent;
   max-height: 650px;
 }
 .dg-collection-visual .dg-photo img {
